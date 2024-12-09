@@ -1,0 +1,109 @@
+.filter-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Divide las secciones */
+  gap: 10px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+/* Sección izquierda: Filtrado */
+.filter-container-left {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre elementos */
+}
+
+/* Sección central: Agregar */
+.filter-container-center {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centra el botón de agregar */
+  flex-grow: 1; /* Permite que ocupe el espacio restante */
+}
+
+/* Sección derecha: Limpiar */
+.filter-container-right {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+/* Estilos adicionales */
+.filter-container span {
+  font-weight: bold;
+}
+
+.filter-container select,
+.filter-container input {
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+.add-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #001f5b;
+  margin-right: 5px;
+}
+
+.add-icon {
+  background: none;
+  border: none;
+  color: #23297F;
+  font-size: 1.5em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.clear-icon {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Espacio entre ícono y texto */
+  background: none;
+  border: none;
+  color: #ff6347;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.clear-icon:hover {
+  color: #e55342; /* Color más oscuro al pasar el cursor */
+}
+
+.clear-broom-icon {
+  font-size: 1.5em; /* Tamaño del ícono */
+}
+
+.clear-label {
+  font-size: 14px; /* Tamaño del texto */
+  color: #333; /* Color del texto */
+}
+
+.filter-input-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.filter-input {
+  flex: 1;
+  padding-right: 2.5rem; /* Espacio para el botón de lupa */
+}
+
+.filter-search-button {
+  position: absolute;
+  right: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: gray;
+  font-size: 1.2rem;
+}
+
+.filter-search-button:hover {
+  color: #007bff; /* Color al pasar el cursor */
+}

@@ -1,0 +1,47 @@
+.menu-administrador {
+  padding: 20px;
+  flex: 1;
+  text-align: center;
+}
+
+.menu-administrador h2 {
+  color: #001f5b;
+  font-weight: bold;
+}
+
+.menu-administrador-opciones {
+  display: flex;
+  justify-content: space-around;
+  align-items: center; /* Alineación vertical de las opciones */
+  margin-top: 30px;
+}
+
+.menu-opcion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: 2px solid #001f5b; /* Agrega borde a cada opción */
+  border-radius: 10px; /* Bordes redondeados */
+  padding: 15px;
+  cursor: pointer;
+  transition: transform 0.2s; /* Animación al hacer hover */
+  width: 150px; /* Ancho fijo para cada opción */
+}
+
+.menu-opcion:hover {
+  transform: scale(1.05); /* Efecto de agrandamiento en hover */
+}
+
+.menu-opcion img {
+  width: 125px; /* Ancho fijo para las imágenes */
+  height: 100px; /* Alto fijo para las imágenes */
+  margin-bottom: 10px;
+}
+
+.menu-opcion p {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #001f5b;
+  text-align: center;
+}

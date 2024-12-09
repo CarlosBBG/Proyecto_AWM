@@ -1,0 +1,135 @@
+/* Contenedor Principal */
+.inicio-sesion-contenedor {
+  width: 100%;
+  height: 98vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Contenedor Máximo */
+.inicio-sesion-max-ancho {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 50px;
+  box-sizing: border-box;
+}
+
+/* Logo y Encabezado */
+.inicio-sesion-logo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.inicio-sesion-logo-epn {
+  max-width: 150px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.inicio-sesion-logo-secundario {
+  max-width: 200px;
+  height: auto;
+  margin-top: 20px;
+}
+
+.inicio-sesion-titulo-principal {
+  font-size: 32px;
+  font-weight: bold;
+  color: #001f5b;
+  text-align: center;
+  margin: 10px 0;
+}
+
+/* Formulario */
+.inicio-sesion-formulario {
+  flex: 1;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-left: 1px solid #ccc;
+}
+
+.inicio-sesion-titulo {
+  font-size: 28px;
+  font-weight: bold;
+  color: #001f5b;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.inicio-sesion-campos {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inicio-sesion-campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.inicio-sesion-campo label {
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #333333;
+}
+
+.inicio-sesion-input {
+  padding: 15px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 30px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.inicio-sesion-input:focus {
+  border-color: #001f5b;
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 31, 91, 0.3);
+}
+
+/* Botón */
+.inicio-sesion-boton {
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #001f5b;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.inicio-sesion-boton:hover {
+  background-color: #004080;
+  transform: scale(1.05);
+}
+
+
+.inicio-sesion-link {
+  color: #001f5b;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+}
+

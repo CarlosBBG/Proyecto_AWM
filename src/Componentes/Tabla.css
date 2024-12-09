@@ -1,0 +1,46 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.table-row {
+  display: table-row;
+}
+
+.table-cell, .header .table-cell {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.header {
+  background-color: #f8f8f8;
+  font-weight: bold;
+}
+
+.header .table-cell {
+  font-weight: bold;
+  color: #333;
+}
+
+.table-cell {
+  width: auto;
+}
+
+.action-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  margin: 0 5px;
+}
+
+.action-button.edit {
+  color: #007bff; /* Azul para editar */
+}
+
+.action-button.delete {
+  color: #dc3545; /* Rojo para eliminar */
+}

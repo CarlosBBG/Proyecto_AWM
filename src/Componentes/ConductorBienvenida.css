@@ -1,0 +1,25 @@
+.conductor-bienvenida-mensaje{
+    font-size: 38px;
+    font-weight: bold;
+    color: #001f5b;
+    text-align: center;
+    margin-bottom: 1px;
+    
+}
+
+.conductor-bienvenida-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 87vh;
+    width: 100%;
+}
+
+img {
+    width:60vh;
+    height: 60vh;
+    
+}
+
+
+

@@ -1,0 +1,66 @@
+.barra-lateral {
+  width: 200px;
+  background-color: #f5f5f5;
+  padding: 20px;
+  height: 81.5vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid #ccc;
+}
+
+.barra-lateral-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  width: 100%;
+}
+
+.barra-lateral-icon {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.barra-lateral-name {
+  font-weight: bold;
+  color: #001f5b;
+}
+
+.barra-lateral-role {
+  color: #888;
+}
+
+.barra-lateral-menu {
+  width: 100%;
+}
+
+.barra-lateral-item:not(:first-child) {
+  border-top: 1px solid #ccc;
+}
+
+.barra-lateral-item {
+  display: block;
+  padding: 10px;
+  color: #001f5b;
+  text-decoration: none;
+  text-align: center;
+}
+
+.barra-lateral-item:hover {
+  background-color: #ddd;
+}
+
+.barra-lateral-item {
+  padding: 10px;
+  color: #555;
+  text-decoration: none;
+  display: block;
+}
+
+.barra-lateral-item.active {
+  font-weight: bold;
+  background-color: #007bff; /* Color de fondo para el ítem activo */
+  color: white;
+}

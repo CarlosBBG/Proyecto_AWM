@@ -1,0 +1,141 @@
+/* Fondo del modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.685); /* Fondo semi-transparente más sutil */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Contenedor del modal */
+.modal-content {
+  background: #ffffff;
+  padding: 25px; /* Espaciado interno más amplio */
+  border-radius: 10px; /* Bordes más suaves */
+  width: 450px; /* Ancho un poco mayor */
+  max-width: 90%;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Sombra más suave */
+  font-family: 'Arial', sans-serif; /* Fuente estándar y legible */
+}
+
+/* Encabezado */
+h2 {
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  color: #333; /* Color de texto neutro */
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+}
+
+/* Grupo de formularios */
+.form-group {
+  margin-bottom: 20px; /* Más espacio entre grupos */
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #555; /* Color más neutro */
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 95%;
+  padding: 12px; /* Espaciado interno más cómodo */
+  font-size: 14px;
+  border: 1px solid #ddd; /* Borde más claro */
+  border-radius: 6px; /* Bordes más redondeados */
+  background-color: #f8f9fa; /* Fondo más claro */
+  transition: all 0.3s ease; /* Transición suave al interactuar */
+}
+
+/* Formularios */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 95%; /* Ancho consistente para todos los elementos */
+  padding: 12px; /* Espaciado interno */
+  font-size: 14px; /* Tamaño de fuente uniforme */
+  border: 1px solid #ddd; /* Bordes claros */
+  border-radius: 6px; /* Bordes redondeados */
+  background-color: #f8f9fa; /* Fondo claro */
+  transition: all 0.3s ease; /* Transición suave al interactuar */
+  box-sizing: border-box; /* Incluye padding y borde en el tamaño */
+}
+
+/* Comportamiento al enfocar */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #007bff; /* Color de borde al enfocar */
+  background-color: #ffffff; /* Fondo blanco */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); /* Resaltado */
+  outline: none; /* Sin borde adicional */
+}
+
+/* Select específico */
+.form-group select {
+  appearance: none; /* Elimina estilos predeterminados del navegador */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 4 5%22%3E%3Cpath fill%3D%22%23ccc%22 d%3D%22M2 0L0 2h4z%22/%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: right 10px center; /* Posición de la flecha */
+  background-size: 10px 10px;
+  cursor: pointer;
+}
+
+/* Textarea específico */
+.form-group textarea {
+  height: 100px; /* Altura inicial */
+  resize: vertical; /* Permite cambiar altura solo verticalmente */
+}
+
+/* Acciones del modal */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.btn {
+  padding: 10px 25px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  transition: background-color 0.3s ease; /* Transición al interactuar */
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3; /* Color más oscuro al pasar el mouse */
+}
+
+.btn-secondary {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: #c82333; /* Color más oscuro al pasar el mouse */
+}
+
+/* Mensajes de error */
+.error-message {
+  color: #e63946; /* Rojo claro */
+  font-size: 12px; /* Fuente más pequeña */
+  margin-top: 6px;
+}
