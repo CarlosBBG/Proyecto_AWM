@@ -13,7 +13,10 @@ const BarraLateral = ({ userName, userRole, userIcon, menuItems }) => {
       navigate('/administrador/inicio');
     } else if (userRole === 'Conductor') {
       navigate('/conductor/inicio');
+    } else if (userRole === 'Estudiante') {
+      navigate('/estudiante/inicio');
     }
+
   };
 
   return (
@@ -33,7 +36,8 @@ const BarraLateral = ({ userName, userRole, userIcon, menuItems }) => {
               key={index}
               className={`barra-lateral-item ${
                 (userRole === 'Administrador' && location.pathname === '/administrador/inicio') ||
-                (userRole === 'Conductor' && location.pathname === '/conductor/inicio')
+                (userRole === 'Conductor' && location.pathname === '/conductor/inicio') || 
+                (userRole === 'Estudiante' && location.pathname === '/estudiante/inicio')
                   ? 'active'
                   : ''
               }`}

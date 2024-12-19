@@ -14,6 +14,7 @@
       "apellido": "Perez",
       "correo": "juan.perez@epn.edu.ec",
       "codigoUnico": "123456789",
+      "rol": "Estudiante",
       "ruta": "13",
       "id": "1"
     },
@@ -48,6 +49,14 @@
       "correo": "luis.guerrero@epn.edu.ec",
       "codigoUnico": "123456789",
       "ruta": "4"
+    },
+    {
+      "id": "6",
+      "nombre": "carlos",
+      "apellido": "benavides",
+      "correo": "carlos@epn.edu.ec",
+      "codigoUnico": "111111111",
+      "password": "asD344%e"
     }
   ],
   "conductores": [

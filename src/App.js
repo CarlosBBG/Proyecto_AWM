@@ -9,6 +9,8 @@ import AdministradorBienvenida from "./Vistas/AdministradorBienvenida";
 import AdministradorConductores from "./Vistas/AdministradorConductores";
 import AdministradorEstudiantes from "./Vistas/AdministradorEstudiantes";
 import AdministradorRutas from "./Vistas/AdministradorRutas";
+import EstudiantePantallaInicio from "./Vistas/EstudiantePantallaInicio";
+import RegistroEstudiantes from "./Vistas/RegistroEstudiantes";
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Routes>
           {/* Rutas */}
           <Route path="/" element={<InicioSesion/>} />
+          <Route path="/registro" element={<RegistroEstudiantes/>} />
+          <Route path="/estudiante/inicio" element={<EstudiantePantallaInicio/>} />
           <Route path="/administrador/inicio" element={<AdministradorBienvenida />} />
           <Route path="/administrador/conductores" element={<AdministradorConductores />} />
           <Route path="/administrador/estudiantes" element={<AdministradorEstudiantes />} />
