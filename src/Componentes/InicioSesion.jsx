@@ -107,7 +107,7 @@ const InicioSesion = () => {
           </form>
           <p className="inicio-sesion-registro">
             ¿No estás registrado?{" "}
-            <span className="inicio-sesion-link">Regístrate</span>
+            <span className="inicio-sesion-link" onClick={() => navigate("/registro")}>Regístrate</span>
           </p>
         </div>
       </div>
