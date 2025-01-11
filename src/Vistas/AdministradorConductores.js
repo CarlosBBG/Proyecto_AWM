@@ -47,7 +47,7 @@ const AdministradorConductores = () => {
   // Cargar datos desde el servidor
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/conductores');
+      const response = await axios.get('http://localhost:8000/conductores');
       const numericData = response.data.map((item) => ({
         ...item,
         id: Number(item.id), // Asegúrate de que el id sea un número
@@ -84,7 +84,7 @@ const AdministradorConductores = () => {
         console.error('No hay un ID válido para eliminar.');
         return;
       }
-      await axios.delete(`http://localhost:3001/conductores/${recordToDelete}`);
+      await axios.delete(`http://localhost:8000/conductores/${recordToDelete}`);
       fetchData(); // Recargar los datos después de eliminar
       setIsDeleteModalOpen(false);
       setRecordToDelete(null); // Limpiar estado
@@ -122,30 +122,57 @@ const AdministradorConductores = () => {
       correo: '',
       cedula: '',
       ruta: '',
+      password: '',
     });
     setIsModalOpen(true);
   };
 
   const handleEditClick = (record) => {
+    // Podrías asignar record.password = '' si no quieres mostrar
+    // el password actual. O podrías mostrarlo si el backend lo devuelve.
     setCurrentRecord(record);
     setIsModalOpen(true);
   };
 
   const handleSave = async (newRecord) => {
     try {
-      if (currentRecord && currentRecord.id !== null) {
-        const updatedRecord = { ...newRecord, id: String(currentRecord.id) };
-        await axios.put(`http://localhost:3001/conductores/${currentRecord.id}`, updatedRecord);
-      } else {
-        const newId = data.length > 0 ? String(Math.max(...data.map((item) => Number(item.id))) + 1) : '1';
-        const recordToAdd = { id: newId, ...newRecord };
-        await axios.post('http://localhost:3001/conductores', recordToAdd);
+      // Combinar los valores actuales con los nuevos
+      const updatedRecord = { ...currentRecord, ...newRecord };
+
+      // Validar campos obligatorios antes de enviar
+      if (
+        !updatedRecord.nombre ||
+        !updatedRecord.apellido ||
+        !updatedRecord.correo ||
+        !updatedRecord.cedula ||
+        !updatedRecord.ruta ||
+        !updatedRecord.password
+      ) {
+        alert('Todos los campos son obligatorios.');
+        return;
       }
-      fetchData();
-      setIsModalOpen(false);
-      setCurrentRecord(null);
+
+      console.log('Datos enviados al backend:', updatedRecord);
+
+      if (updatedRecord.id !== null) {
+        // Actualizar un registro existente
+        await axios.put(
+          `http://localhost:8000/conductores/${updatedRecord.id}`,
+          updatedRecord
+        );
+      } else {
+        // Crear un nuevo registro
+        await axios.post('http://localhost:8000/conductores', updatedRecord);
+      }
+
+      fetchData(); // Recargar datos después de guardar
+      setIsModalOpen(false); // Cerrar modal
+      setCurrentRecord(null); // Limpiar estado
     } catch (error) {
-      console.error('Error al guardar el registro:', error);
+      console.error(
+        'Error al guardar el registro:',
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -227,7 +254,8 @@ const AdministradorConductores = () => {
               label: 'Correo',
               name: 'correo',
               value: currentRecord?.correo || '',
-              onChange: (value) => setCurrentRecord((prev) => ({ ...prev, correo: value })),
+              onChange: (value) =>
+                setCurrentRecord((prev) => ({ ...prev, correo: value })),
               validate: (value) =>
                 /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
                   ? ''
@@ -247,17 +275,38 @@ const AdministradorConductores = () => {
                   ? ''
                   : 'La cédula debe tener exactamente 10 dígitos.',
             },
+            // Campo nuevo: password
+            {
+              label: 'Password',
+              name: 'password',
+              type: 'password',
+              value: currentRecord?.password || '',
+              onChange: (value) =>
+                setCurrentRecord((prev) => ({ ...prev, password: value })),
+              validate: (value) => {
+                if (value.length < 6) {
+                  return 'La contraseña debe tener al menos 6 caracteres.';
+                }
+                return '';
+              },
+            },
             {
               label: 'Ruta',
               name: 'ruta',
               type: 'select',
               value: currentRecord?.ruta || '',
-              onChange: (value) => setCurrentRecord((prev) => ({ ...prev, ruta: value })),
+              onChange: (value) =>
+                setCurrentRecord((prev) => ({ ...prev, ruta: value })),
               options: Array.from({ length: 18 }, (_, i) => (i + 1).toString()),
-              validate: (value) =>
-                /^[1-9]$|^1[0-8]$/.test(value)
+              validate: (value) => {
+                // Opcionalmente, si no quieres validación cuando no cambia, podrías hacer algo distinto
+                if (!value) {
+                  return '';
+                }
+                return /^[1-9]$|^1[0-8]$/.test(value)
                   ? ''
-                  : 'Debe seleccionar una ruta válida.',
+                  : 'Debe seleccionar una ruta válida.';
+              },
             },
           ]}
         />

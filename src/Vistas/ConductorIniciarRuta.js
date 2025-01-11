@@ -6,54 +6,78 @@ import { useNavigate } from "react-router-dom";
 import BarraLateral from "../Componentes/BarraLateral";
 
 function ConductorIniciarRuta() {
-  // Opciones de menú para ConductorMenu
   const menuItems = [
     { label: "Inicio", link: "/conductor/inicio" },
     { label: "Iniciar Ruta", link: "/conductor/iniciar-ruta" },
     { label: "Ver Estado de la Ruta", link: "/conductor/ruta-check" },
   ];
 
-  // Datos del conductor
-  const [conductor, setConductor] = useState(null); // Inicializa como null
+  const [conductor, setConductor] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Cargar datos del conductor
+    // 1) Revisar si en localStorage está el usuario logueado
+    const storedUser = localStorage.getItem("usuario");
+    if (!storedUser) {
+      console.warn("No hay conductor en localStorage. Redirigiendo al login...");
+      navigate("/"); // O como manejes el caso sin sesión
+      return;
+    }
+
+    // 2) Parsear y extraer el ID del conductor
+    const userData = JSON.parse(storedUser);
+    const conductorId = userData.id; // Asumiendo que el back te lo mandó como "id"
+
+    // 3) Llamar al backend para obtener toda la info del conductor, incluido su rutaData
+    //    (Recuerda en el backend hacer el `include: ['rutaData']` si usas Sequelize)
     axios
-      .get("http://localhost:3001/conductores/1")
+      .get(`http://localhost:8000/conductores/${conductorId}`)
       .then((response) => {
-        console.log("Conductor recibido:", response.data); // Depuración
+        console.log("Conductor recibido:", response.data);
         setConductor(response.data);
       })
       .catch((error) => {
         console.error("Error al cargar los datos del conductor:", error);
       });
-  }, []);
+  }, [navigate]);
 
-  const mapaInicialSrc =
-    "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d43187.25868662508!2d-78.52596115282607!3d-0.24946750913633772!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e0!4m5!1s0x91d5a27340683463%3A0xdfb5eabd7bf000e1!2sEstacion%20Transferencia%20Ecovia%20-%20El%20Capul%C3%AD%2C%20Calle%205%2C%20Quito!3m2!1d-0.29960139999999996!2d-78.5420267!4m5!1s0x91d59a107e1cd44b%3A0x88a284f66939ed4!2sESCUELA%20POLIT%C3%89CNICA%20NACIONAL%2C%20Av.%20Ladr%C3%B3n%20de%20Guevara%20E11-253%2C%20Quito%20170143!3m2!1d-0.2124413!2d-78.4905842!5e0!3m2!1ses!2sec";
+  // EJEMPLO: si ya configuraste el backend para que el "rutaData" venga incluido:
+  // {
+  //   id: 2,
+  //   nombre: 'Ana',
+  //   apellido: 'Martinez',
+  //   email: 'ana.martinez@example.com',
+  //   ...
+  //   rutaData: {
+  //     id: 2,
+  //     nombre_ruta: 'Ruta Guamaní',
+  //     recorrido: 'EPN - Trébol - Guamaní',
+  //     ...
+  //   }
+  // }
 
-
-    const navigate = useNavigate();
-
-  // Funciones de manejo de eventos
   const iniciarRuta = () => {
     alert("La ruta ha sido iniciada.");
     navigate("/conductor/ruta-check");
   };
 
+  const mapaInicialSrc =
+  "https://lc.cx/7yZjV4";
+
+  // Si quieres usar la ruta real del conductor en el título:
+  const tituloRuta = conductor?.rutaData
+    ? `RUTA: ${conductor.rutaData.nombre}`
+    : "RUTA DESCONOCIDA";
+
   return (
     <div>
-      {/* Encabezado */}
       <Encabezado />
-
-      {/* Ruta Inicio */}
       <div className="app-contenido">
-        {/* Render condicional para evitar errores */}
         {conductor ? (
           <BarraLateral
             userName={conductor.nombre + " " + conductor.apellido}
-            userRole={conductor.rol}
-            userIcon={conductor.icono}
+            userRole={"Conductor"}
+            userIcon={"https://cdn-icons-png.flaticon.com/128/1464/1464721.png"}
             menuItems={menuItems}
           />
         ) : (
@@ -62,7 +86,7 @@ function ConductorIniciarRuta() {
 
         <ConductorRutaInicio
           claseContenedor="ruta-personalizada"
-          tituloRuta="RUTA: CAPULÍ"
+          tituloRuta={tituloRuta}
           mapaSrc={mapaInicialSrc}
           textoBoton="Comenzar"
           onIniciarRuta={iniciarRuta}

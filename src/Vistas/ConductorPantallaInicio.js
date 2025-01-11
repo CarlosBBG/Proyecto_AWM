@@ -14,19 +14,32 @@ function ConductorPantallaInicio() {
   const [conductor, setConductor] = useState(null);
 
   useEffect(() => {
-    // Cargar datos del conductor
+    // 1) Revisar si en localStorage está el usuario
+    const storedUser = localStorage.getItem("usuario");
+    if (!storedUser) {
+      // No hay usuario logueado, podrías redirigir al login
+      console.warn("No hay conductor en localStorage. Redirigiendo...");
+      // navigate("/") o algo similar
+      return;
+    }
+
+    // 2) Parsear y tomar el id
+    const userData = JSON.parse(storedUser);
+    const conductorId = userData.id;  // Asumiendo que en el backend es "id"
+
+    // 3) Hacer la consulta GET usando el ID real
     axios
-      .get("http://localhost:3001/conductores/1")
+      .get(`http://localhost:8000/conductores/${conductorId}`)
       .then((response) => {
-        console.log("Conductor recibido:", response.data); // Depuración
+        console.log("Conductor recibido:", response.data);
         setConductor(response.data);
       })
       .catch((error) => {
-        console.error("Error al cargar los datos del conductor:", error);
+        console.error("Error al cargar datos del conductor:", error);
       });
   }, []);
 
-  const mensaje = `Bienvenido al Sistema del Transporte Estudiantil`;
+  const mensaje = `Bienvenido al Sistema de Transporte Estudiantil`;
   const imagen = "/polibus-logo-500h.png";
 
   return (
@@ -35,9 +48,9 @@ function ConductorPantallaInicio() {
       <div className="app-contenido">
         {conductor ? (
           <BarraLateral
-            userName={conductor.nombre + " " + conductor.apellido}
-            userRole={conductor.rol}
-            userIcon={conductor.icono}
+            userName={`${conductor.nombre} ${conductor.apellido}`}
+            userRole={conductor.role || "Conductor"}
+            userIcon="https://cdn-icons-png.flaticon.com/128/1464/1464721.png"
             menuItems={menuItems}
           />
         ) : (

@@ -5,6 +5,7 @@
   
   .contenido-principal {
     display: flex;
+    width: 100vw;
   }
   
   .contenido-tabla {
