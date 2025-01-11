@@ -10,49 +10,38 @@ const InicioSesion = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
-      // Consultar conductores
-      const conductoresResponse = await axios.get(
-        `http://localhost:3001/conductores`
-      );
-      const conductores = conductoresResponse.data;
+      // Hacer la solicitud POST a /api/login (o la ruta que uses en tu backend)
+      const response = await axios.post('http://localhost:8000/login', {
+        correo: email,
+        password: password,
+      });
 
-      // Validar si es conductor
-      const conductor = conductores.find(
-        (c) => c.correo === email && c.password === password
-      );
+      // El servidor responde con el usuario y role: "admin" o "conductor"
+      const userData = response.data;
+      console.log('Usuario logueado:', userData);
 
-      if (conductor) {
-        console.log("Conductor encontrado:", conductor);
-        localStorage.setItem("usuario", JSON.stringify(conductor));
-        navigate("/conductor/inicio");
-        return;
+      // Guardar en localStorage
+      localStorage.setItem('usuario', JSON.stringify(userData));
+
+      // Redirigir según el role
+      if (userData.role === 'admin') {
+        navigate('/administrador/inicio');
+      } else if (userData.role === 'conductor') {
+        navigate('/conductor/inicio');
+      } else if (userData.role === 'estudiante') {
+        navigate('/estudiante/inicio');
+      } else {
+        // Fallback si en un futuro agregas más roles
+        alert('Rol desconocido');
       }
-
-      // Consultar administradores
-      const administradoresResponse = await axios.get(
-        `http://localhost:3001/administradores`
-      );
-      const administradores = administradoresResponse.data;
-
-      // Validar si es administrador
-      const administrador = administradores.find(
-        (a) => a.correo === email && a.password === password
-      );
-
-      if (administrador) {
-        console.log("Administrador encontrado:", administrador);
-        localStorage.setItem("usuario", JSON.stringify(administrador));
-        navigate("/administrador/inicio");
-        return;
-      }
-
-      // Si no se encuentra, mostrar error
-      alert("Correo o contraseña incorrectos");
-
     } catch (error) {
-      console.error("Error al validar las credenciales:", error);
+      console.error('Error al iniciar sesión:', error);
+      if (error.response && error.response.status === 401) {
+        alert('Correo o contraseña incorrectos');
+      } else {
+        alert('Ocurrió un error en el servidor');
+      }
     }
   };
 

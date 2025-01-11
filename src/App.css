@@ -1,12 +1,13 @@
 .App {
   display: flex;
   flex-direction: column;
-  margin-top: 15px;
+  background-color: #ffffff;
 }
 
 .app-contenido {
   display: flex;
-  width: 100%;
+  width: 206vh;
+  height: 88vh;
   margin-top: 20px;
   justify-content: space-between;
   margin: 0;

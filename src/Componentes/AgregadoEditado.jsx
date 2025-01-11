@@ -19,12 +19,14 @@ const AgregadoEditado = ({
 
   // Validar un campo individual
   const validateField = (field, value) => {
+    const stringValue = typeof value === 'string' ? value.trim() : ''; // Asegúrate de que sea una cadena
     if (field.validate) {
-      const error = field.validate(value.trim());
-      return error;
+        const error = field.validate(stringValue);
+        return error;
     }
     return '';
-  };
+};
+
 
   // Actualizar errores y valores mientras se escribe
   const handleInputChange = (field, value) => {
@@ -40,20 +42,22 @@ const AgregadoEditado = ({
 
     const newErrors = {};
     const newRecord = fields.reduce((record, field) => {
-      const error = validateField(field, field.value);
-      if (error) {
-        newErrors[field.name] = error;
-      }
-      record[field.name] = field.value.trim();
-      return record;
+        const value = typeof field.value === 'string' ? field.value.trim() : field.value; // Validar antes de usar trim
+        const error = validateField(field, value);
+        if (error) {
+            newErrors[field.name] = error;
+        }
+        record[field.name] = value; // Usar el valor procesado
+        return record;
     }, {});
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      onSave(newRecord); // Enviar el registro si no hay errores
+        onSave(newRecord); // Enviar el registro si no hay errores
     }
-  };
+};
+
 
   return (
     <div className={`modal-overlay ${className || ''}`}>

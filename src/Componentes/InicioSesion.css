@@ -1,11 +1,10 @@
 /* Contenedor Principal */
 .inicio-sesion-contenedor {
-  width: 100%;
-  height: 98vh;
+  width: 205vh;
+  height: 95vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;

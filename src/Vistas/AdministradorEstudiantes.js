@@ -38,7 +38,7 @@ const AdministradorEstudiantes = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/estudiantes');
+      const response = await axios.get('http://localhost:8000/estudiantes');
       const numericData = response.data.map((item) => ({
         ...item,
         id: Number(item.id), // Asegúrate de que el id sea un número
@@ -65,13 +65,22 @@ const AdministradorEstudiantes = () => {
 
   const handleSave = async (newRecord) => {
     try {
+      const recordToAdd = {
+        nombre: newRecord.nombre,
+        apellido: newRecord.apellido,
+        correo: newRecord.correo,
+        password: newRecord.password, // Asegúrate de incluir el campo password
+        codigoUnico: newRecord.codigoUnico,
+        ruta: newRecord.ruta,
+      };
+
       if (currentRecord && currentRecord.id !== null) {
-        const updatedRecord = { ...newRecord, id: String(currentRecord.id) };
-        await axios.put(`http://localhost:3001/estudiantes/${currentRecord.id}`, updatedRecord);
+        const updatedRecord = { ...recordToAdd, id: currentRecord.id };
+        console.log('Datos enviados para actualizar:', updatedRecord); // Verificar los datos enviados
+        await axios.put(`http://localhost:8000/estudiantes/${currentRecord.id}`, updatedRecord);
       } else {
-        const newId = data.length > 0 ? String(Math.max(...data.map((item) => Number(item.id))) + 1) : '1';
-        const recordToAdd = { id: newId, ...newRecord };
-        await axios.post('http://localhost:3001/estudiantes', recordToAdd);
+        console.log('Datos enviados para crear:', recordToAdd); // Verificar los datos enviados
+        await axios.post('http://localhost:8000/estudiantes', recordToAdd);
       }
       fetchData();
       setIsModalOpen(false);
@@ -132,6 +141,7 @@ const AdministradorEstudiantes = () => {
       nombre: '',
       apellido: '',
       correo: '',
+      password: '',
       codigoUnico: '',
       ruta: '',
     });
@@ -234,6 +244,19 @@ const AdministradorEstudiantes = () => {
                   : 'Debe ingresar un correo válido con @epn.edu.ec.',
             },
             {
+              label: 'Password',
+              name: 'password',
+              type: 'password', // Asegúrate de que el campo tenga el tipo 'password'
+              value: currentRecord?.password || '',
+              onChange: (value) => {
+                setCurrentRecord((prev) => ({ ...prev, password: value }));
+              },
+              validate: (value) =>
+                value.length >= 6
+                  ? ''
+                  : 'La contraseña debe tener al menos 6 caracteres.',
+            },
+            {
               label: 'Código Único',
               name: 'codigoUnico',
               value: currentRecord?.codigoUnico || '',
@@ -251,8 +274,10 @@ const AdministradorEstudiantes = () => {
               label: 'Ruta',
               name: 'ruta',
               type: 'select',
-              value: currentRecord?.ruta || '',
-              onChange: (value) => setCurrentRecord((prev) => ({ ...prev, ruta: value })),
+              value: currentRecord?.ruta?.toString() || '',
+              onChange: (value) => {
+                setCurrentRecord((prev) => ({ ...prev, ruta: value.toString() }));
+              },
               options: Array.from({ length: 18 }, (_, i) => (i + 1).toString()),
               validate: (value) =>
                 /^[1-9]$|^1[0-8]$/.test(value)
