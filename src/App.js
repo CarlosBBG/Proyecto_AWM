@@ -11,7 +11,9 @@ import AdministradorEstudiantes from "./Vistas/AdministradorEstudiantes";
 import AdministradorRutas from "./Vistas/AdministradorRutas";
 import EstudiantePantallaInicio from "./Vistas/EstudiantePantallaInicio";
 import RegistroEstudiantes from "./Vistas/RegistroEstudiantes";
-
+import EstudianteSeleccionParada from "./Vistas/EstudianteSeleccionParada";
+import EstudianteSeleccionRuta from "./Vistas/EstudianteSeleccionRuta";
+import EstudianteRutaCheck from "./Vistas/EstudianteRutaCheck";
 function App() {
   return (
     <Router>
@@ -28,6 +30,9 @@ function App() {
           <Route path="/conductor/inicio" element={<ConductorPantallaInicio />} />
           <Route path="/conductor/iniciar-ruta" element={<ConductorIniciarRuta />} />
           <Route path="/conductor/ruta-check" element={<ConductorRutaCheck />} />
+          <Route path="/estudiante/parada" element={<EstudianteSeleccionParada/>}/>
+          <Route path="/estudiante/ruta" element={<EstudianteSeleccionRuta/>}/>
+          <Route path="/estudiante/ruta-check" element={<EstudianteRutaCheck/>}/>
         </Routes>
       </div>
     </Router>

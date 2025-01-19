@@ -7,8 +7,8 @@ import EstudianteBienvenida from "../Componentes/EstudianteBienvenida";
 function EstudiantePantallaInicio() {
   const menuItems = [
     { label: "Inicio", link: "/estudiante/inicio" },
-    { label: "Seleccionar Ruta", link: "/estudiante/seleccionar-ruta" },
-    { label: "Seleccionar Parada", link: "/estudiante/seleccionar-check" },
+    { label: "Seleccionar Ruta", link: "/estudiante/ruta" },
+    { label: "Seleccionar Parada", link: "/estudiante/parada" },
     { label: "Ver Estado de la Ruta", link: "/estudiante/ruta-check" },
   ];
 

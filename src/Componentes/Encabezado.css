@@ -4,9 +4,8 @@
   justify-content: space-between;
   background-color: #ffffff;
   padding: 10px 20px;
-  height: 13px;
   border-bottom: 1px solid #ccc;
-  height: 8vh;
+  height: 13vh;
 }
 
 .encabezado-logo {
@@ -16,6 +15,7 @@
 
 .encabezado-text {
   font-size: 30px;
+  margin-top: 25px;
   text-align: center;
   font-weight: bold;
   color: #001f5b;
