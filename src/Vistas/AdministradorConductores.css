@@ -1,10 +1,12 @@
-.administrador-conductor {
+.administrador-conductores {
     display: flex;
     flex-direction: column;
+    height: 100vh;
   }
   
-  .contenido-principal-conductores {
+  .contenido-principal {
     display: flex;
+    height: 100%;
   }
   
   .contenido-tabla-conductores {

@@ -57,12 +57,19 @@ const EstudianteSeleccionRuta = () => {
       return;
     }
 
+    // Guardar la referencia del botón seleccionado y centrarlo
+    const rutaElement = document.getElementById(`ruta-${id}`);
+    if (rutaElement) {
+      rutaElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
     if (pendingRutaId === id) {
       setPendingRutaId(null);
     } else {
       setPendingRutaId(id);
     }
   };
+
 
   const handleAccept = () => {
     if (!pendingRutaId) return;
@@ -100,25 +107,27 @@ const EstudianteSeleccionRuta = () => {
   };
 
   return (
-    <div className="App">
+    <div className="estudiante-seleccionar-ruta">
       <Encabezado />
-      <div className="app-contenido">
+      <div className="estudiante-seleccionar-ruta-container">
         {estudiante ? (
           <BarraLateral
             userName={`${estudiante.nombre} ${estudiante.apellido}`}
             userRole={estudiante.rol || "Estudiante"}
-            userIcon={estudiante.icono || "https://cdn-icons-png.flaticon.com/128/2991/2991148.png"}
+            userIcon={estudiante.icono || "https://cdn-icons-png.flaticon.com/128/3135/3135810.png"}
             menuItems={menuItems}
           />
         ) : (
           <p>Cargando datos del estudiante...</p>
         )}
         <section className="pantalla-estudiante-seleccion-de-parada-container4">
+        <h1>Seleccione su ruta:</h1>
           <div className="container">
-            <h1>Seleccione su ruta:</h1>
+            
             {rutas.map((ruta) => (
               <div
                 key={ruta.id}
+                id={`ruta-${ruta.id}`} // Agregamos un id para referenciarlo
                 className={`route-card ${selectedRutaId === ruta.id ? 'selected' : ''}`}
                 onClick={() => handleRutaClick(ruta.id)}
                 style={{
@@ -126,8 +135,8 @@ const EstudianteSeleccionRuta = () => {
                     pendingRutaId === ruta.id
                       ? '#FFD700' // Amarillo para selección temporal
                       : selectedRutaId === ruta.id
-                      ? '#32A94C' // Verde confirmado
-                      : '#c5b6e0', // Por defecto
+                        ? '#32A94C' // Verde confirmado
+                        : '#c5b6e0', // Por defecto
                 }}
               >
                 <h2>{ruta.nombre}</h2>
@@ -143,12 +152,14 @@ const EstudianteSeleccionRuta = () => {
                 )}
               </div>
             ))}
-            {selectedRutaId && (
-              <button className="remove-button" onClick={handleRemoveRuta}>
-                Quitar Ruta
-              </button>
-            )}
+
+
           </div>
+          {selectedRutaId && (
+            <button className="remove-button" onClick={handleRemoveRuta}>
+              Quitar Ruta
+            </button>
+          )}
         </section>
       </div>
     </div>

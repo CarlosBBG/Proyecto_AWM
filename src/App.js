@@ -14,6 +14,8 @@ import RegistroEstudiantes from "./Vistas/RegistroEstudiantes";
 import EstudianteSeleccionParada from "./Vistas/EstudianteSeleccionParada";
 import EstudianteSeleccionRuta from "./Vistas/EstudianteSeleccionRuta";
 import EstudianteRutaCheck from "./Vistas/EstudianteRutaCheck";
+import 'leaflet/dist/leaflet.css';
+
 function App() {
   return (
     <Router>

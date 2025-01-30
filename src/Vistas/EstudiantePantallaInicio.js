@@ -3,6 +3,7 @@ import Encabezado from "../Componentes/Encabezado";
 import BarraLateral from "../Componentes/BarraLateral";
 import axios from "axios";
 import EstudianteBienvenida from "../Componentes/EstudianteBienvenida";
+import "./EstudiantePantallaInicio.css";
 
 function EstudiantePantallaInicio() {
   const menuItems = [
@@ -40,14 +41,14 @@ function EstudiantePantallaInicio() {
   const imagen = "/polibus-logo-500h.png";
 
   return (
-    <div>
+    <div className="estudiante-inicio">
       <Encabezado />
-      <div className="app-contenido">
+      <div className="estudiante-inicio-container">
         {estudiante ? (
           <BarraLateral
             userName={`${estudiante.nombre} ${estudiante.apellido}`}
             userRole={estudiante.rol || "Estudiante"}
-            userIcon={estudiante.icono || "https://cdn-icons-png.flaticon.com/128/2991/2991148.png"}
+            userIcon={estudiante.icono || "https://cdn-icons-png.flaticon.com/128/3135/3135810.png"}
             menuItems={menuItems}
           />
         ) : (

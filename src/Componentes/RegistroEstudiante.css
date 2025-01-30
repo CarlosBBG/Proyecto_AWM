@@ -7,21 +7,20 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
     width: 100vw;
+    height: 100vh;
   }
   
   .registro-estudiante-container {
     display: flex;
     justify-content: space-between;
-    margin-left: 3.5%;
     align-items: center;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 90vw;
-    height: 80%;
-    padding: 20px;
+    width: 100%;
+    height: 100%;
+    
   }
   
   .form-container {

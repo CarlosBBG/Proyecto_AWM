@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ConductorRutaInicio from "../Componentes/ConductorRutaInicio";
 import Encabezado from "../Componentes/Encabezado";
-import { useNavigate } from "react-router-dom";
 import BarraLateral from "../Componentes/BarraLateral";
+import { useNavigate } from "react-router-dom";
+import "./ConductorIniciarRuta.css";
 
 function ConductorIniciarRuta() {
   const menuItems = [
@@ -13,23 +14,37 @@ function ConductorIniciarRuta() {
   ];
 
   const [conductor, setConductor] = useState(null);
+  const [paradas, setParadas] = useState([]); // Inicializar como array vacío
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 1) Revisar si en localStorage está el usuario logueado
     const storedUser = localStorage.getItem("usuario");
     if (!storedUser) {
       console.warn("No hay conductor en localStorage. Redirigiendo al login...");
-      navigate("/"); // O como manejes el caso sin sesión
+      navigate("/"); 
       return;
     }
 
-    // 2) Parsear y extraer el ID del conductor
     const userData = JSON.parse(storedUser);
-    const conductorId = userData.id; // Asumiendo que el back te lo mandó como "id"
+    const conductorId = userData.id;
 
-    // 3) Llamar al backend para obtener toda la info del conductor, incluido su rutaData
-    //    (Recuerda en el backend hacer el `include: ['rutaData']` si usas Sequelize)
+    axios
+  .get(`http://localhost:8000/conductores/${conductorId}/paradas`)
+  .then((response) => {
+    console.log("Paradas de la ruta recibidas:", response.data);
+    // Accedemos al array de paradas dentro del objeto de respuesta
+    if (response.data && Array.isArray(response.data.paradas)) {
+      setParadas(response.data.paradas); // Guardar solo el array de paradas
+    } else {
+      console.error("La respuesta no contiene un array de paradas:", response.data);
+      setParadas([]); // En caso de error, inicializar como un array vacío
+    }
+  })
+  .catch((error) => {
+    console.error("Error al cargar las paradas de la ruta:", error);
+    setParadas([]); // Manejar el error y evitar que quede undefined
+  });
+
     axios
       .get(`http://localhost:8000/conductores/${conductorId}`)
       .then((response) => {
@@ -39,40 +54,24 @@ function ConductorIniciarRuta() {
       .catch((error) => {
         console.error("Error al cargar los datos del conductor:", error);
       });
-  }, [navigate]);
-
-  // EJEMPLO: si ya configuraste el backend para que el "rutaData" venga incluido:
-  // {
-  //   id: 2,
-  //   nombre: 'Ana',
-  //   apellido: 'Martinez',
-  //   email: 'ana.martinez@example.com',
-  //   ...
-  //   rutaData: {
-  //     id: 2,
-  //     nombre_ruta: 'Ruta Guamaní',
-  //     recorrido: 'EPN - Trébol - Guamaní',
-  //     ...
-  //   }
-  // }
+  }, []);
 
   const iniciarRuta = () => {
     alert("La ruta ha sido iniciada.");
     navigate("/conductor/ruta-check");
   };
 
-  const mapaInicialSrc =
-  "https://lc.cx/7yZjV4";
-
-  // Si quieres usar la ruta real del conductor en el título:
   const tituloRuta = conductor?.rutaData
     ? `RUTA: ${conductor.rutaData.nombre}`
     : "RUTA DESCONOCIDA";
 
   return (
-    <div>
-      <Encabezado />
-      <div className="app-contenido">
+    <div className="iniciar-ruta">
+      
+        <Encabezado />
+      
+      
+      <div className="ruta-container">
         {conductor ? (
           <BarraLateral
             userName={conductor.nombre + " " + conductor.apellido}
@@ -87,9 +86,10 @@ function ConductorIniciarRuta() {
         <ConductorRutaInicio
           claseContenedor="ruta-personalizada"
           tituloRuta={tituloRuta}
-          mapaSrc={mapaInicialSrc}
           textoBoton="Comenzar"
           onIniciarRuta={iniciarRuta}
+          paradas={paradas}
+         
         />
       </div>
     </div>

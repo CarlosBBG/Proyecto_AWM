@@ -1,6 +1,7 @@
-.administrador-estudiante {
+.administrador-estudiantes {
     display: flex;
     flex-direction: column;
+    height: 100vh;
   }
   
   .contenido-principal {

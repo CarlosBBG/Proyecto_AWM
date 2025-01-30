@@ -66,6 +66,12 @@ function EstudianteSeleccionParada() {
     }, []);
 
     const handleParadaClick = (id) => {
+        // Referencia al elemento seleccionado
+        const paradaElement = document.getElementById(`parada-${id}`);
+        if (paradaElement) {
+            paradaElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+
         if (pendingParadaId === id) {
             setPendingParadaId(null);
         } else {
@@ -73,25 +79,26 @@ function EstudianteSeleccionParada() {
         }
     };
 
+
     const handleAccept = () => {
         if (!pendingParadaId) return;
-    
+
         axios
             .put(`http://localhost:8000/estudiantes/${estudiante.id}/paradas`, { parada: pendingParadaId })
             .then((response) => {
                 console.log(`Parada ${pendingParadaId} asignada al estudiante ${estudiante.id}.`);
-                
+
                 const { message } = response.data;
-    
+
                 // Actualizar el estado del estudiante y la parada seleccionada
                 setSelectedParadaId(pendingParadaId);
                 setPendingParadaId(null);
-    
+
                 // Si el número de asientos fue afectado, lo actualizamos
                 if (!message.includes('Parada actualizada correctamente')) {
                     setAsientosDisponibles((prev) => Math.max(0, prev - 1));
                 }
-    
+
                 alert(message);
             })
             .catch((error) => {
@@ -99,7 +106,7 @@ function EstudianteSeleccionParada() {
                 alert(error.response?.data?.message || "Hubo un problema al actualizar la parada.");
             });
     };
-    
+
 
     const handleCancel = () => {
         setPendingParadaId(null);
@@ -123,40 +130,42 @@ function EstudianteSeleccionParada() {
     };
 
     return (
-        <div className="App">
+        <div className="estudiante-seleccionar-parada">
             <Encabezado />
-            <div className="app-contenido">
+            <div className="estudiante-seleccionar-parada-container">
                 {estudiante ? (
                     <BarraLateral
                         userName={`${estudiante.nombre} ${estudiante.apellido}`}
                         userRole={estudiante.rol || "Estudiante"}
-                        userIcon={estudiante.icono || "https://cdn-icons-png.flaticon.com/128/2991/2991148.png"}
+                        userIcon={estudiante.icono || "https://cdn-icons-png.flaticon.com/128/3135/3135810.png"}
                         menuItems={menuItems}
                     />
                 ) : (
                     <p>Cargando datos del estudiante...</p>
                 )}
-                <section className="pantalla-estudiante-seleccion-de-parada-container4">
-                    <div className="container">
+                <div className="estudiante-paradas">
+                <h1>Seleccione su parada:</h1>
+                    <div className="paradas-container">
                         {!estudiante?.ruta ? (
                             <h2 style={{ color: 'red' }}>
                                 Primero debe seleccionar una ruta para poder ver las paradas.
                             </h2>
                         ) : (
                             <>
-                                <h1>Seleccione su parada:</h1>
+                                
                                 {paradas.map((parada) => (
                                     <div
                                         key={parada.id}
+                                        id={`parada-${parada.id}`} // Agregamos un id para referenciarlo
                                         className={`bus-stop-card ${selectedParadaId === parada.id ? 'selected' : ''}`}
                                         onClick={() => handleParadaClick(parada.id)}
                                         style={{
                                             backgroundColor:
                                                 pendingParadaId === parada.id
-                                                    ? '#FFD700'
+                                                    ? '#FFD700' // Amarillo para selección temporal
                                                     : selectedParadaId === parada.id
-                                                    ? '#32A94C'
-                                                    : '#c5b6e0',
+                                                        ? '#32A94C' // Verde confirmado
+                                                        : '#c5b6e0', // Por defecto
                                         }}
                                     >
                                         <h2>{parada.nombre}</h2>
@@ -172,20 +181,20 @@ function EstudianteSeleccionParada() {
                                         )}
                                     </div>
                                 ))}
-                                {selectedParadaId && (
-                                    <button className="remove-button" onClick={handleRemoveSelection}>
-                                        Quitar selección de parada
-                                    </button>
-                                )}
-                                {asientosDisponibles !== null && (
-                                    <p id="seats-available" className="seats-available">
-                                        Asientos disponibles: {asientosDisponibles}
-                                    </p>
-                                )}
                             </>
                         )}
                     </div>
-                </section>
+                    {selectedParadaId && (
+                                    <button className="remove-button" onClick={handleRemoveSelection}>
+                                        Quitar Parada
+                                    </button>
+                                )}
+                    {asientosDisponibles !== null && (
+                        <p id="seats-available" className="seats-available">
+                            Asientos disponibles: {asientosDisponibles}
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -10,6 +10,13 @@
 .app-contenido {
   display: flex;
   width: 208.5vh;
+  height: 80vh;
   margin: 0px;
   justify-content: space-between;
+}
+
+.MapaInteractivo {
+  height: 400px; /* Asegúrate de tener un alto suficiente */
+  width: 100%;
+  margin: auto;
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ConductorBienvenida from "../Componentes/ConductorBienvenida";
 import Encabezado from "../Componentes/Encabezado";
 import BarraLateral from "../Componentes/BarraLateral";
+import "./ConductorPantallaInicio.css";
 import axios from "axios";
 
 function ConductorPantallaInicio() {
@@ -43,9 +44,9 @@ function ConductorPantallaInicio() {
   const imagen = "/polibus-logo-500h.png";
 
   return (
-    <div>
+    <div className="conductor-inicio">
       <Encabezado />
-      <div className="app-contenido">
+      <div className="conductor-inicio-container">
         {conductor ? (
           <BarraLateral
             userName={`${conductor.nombre} ${conductor.apellido}`}

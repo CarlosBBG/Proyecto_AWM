@@ -1,38 +1,39 @@
-.pantalla-estudiante-seleccion-de-parada-container4 {
-  flex:5;
-  height: auto;
+.estudiante-seleccionar-parada {
   display: flex;
-  align-items: flex-start;
   flex-direction: column;
-  justify-content: center;
-}
-.pantalla-estudiante-seleccion-de-parada-container5 {
-  width: 100%;
-  height: auto;
-}
-.pantalla-estudiante-seleccion-de-parada-container6 {
-  width: 100%;
-  height: auto;
-  display: contents;
-}
-
-.pantalla-estudiante-seleccion-de-parada-container6{
-  box-sizing: border-box;
-  margin: 0;
+  height: 100vh;
+  width: 100vw;
+  margin: 0px;
   padding: 0;
-  font-family: Arial, sans-serif;
 }
 
-.container {
-  max-width: 80%;
-  margin: auto;
+.estudiante-seleccionar-parada-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  justify-content: space-between;
+}
+
+.estudiante-paradas {
+  flex: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%; /* Limita la altura máxima */
+  overflow-y: auto; /* Agrega barra de desplazamiento si es necesario */
+}
+
+.paradas-container {
+  width: 70%;
+  max-height: 45vh; /* Define una altura máxima del contenedor */
+  overflow-y: auto; /* Agrega barra de desplazamiento vertical */
   padding: 1%;
   text-align: center;
 }
 
-h1 {
-  margin-bottom: 20px;
-}
+
 
 .bus-stop-card {
   background-color: #c5b6e0;
@@ -78,6 +79,7 @@ h1 {
 
 .remove-button {
   margin-top: 20px;
+  width: 100%;
   padding: 10px 20px;
   background-color: #ff4d4d;
   color: white;
