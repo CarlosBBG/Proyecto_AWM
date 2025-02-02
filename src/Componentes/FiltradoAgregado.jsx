@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { FaPlus, FaSearch } from 'react-icons/fa';
+import { FaPlus } from 'react-icons/fa';
 import { GiBroom } from 'react-icons/gi';
 import './FiltradoAgregado.css';
 
@@ -15,13 +15,12 @@ const FiltradoAgregado = ({
   onClearFilter,
   onFilterTextChange,
 }) => {
-  const [selectedFilter, setSelectedFilter] = useState(''); // Filtro seleccionado
+  const [selectedFilter, setSelectedFilter] = useState('');
 
-  const handleSearchClick = () => {
+  const handleFilterChange = (text) => {
+    onFilterTextChange(text);
     if (selectedFilter) {
-      onFilterApply(selectedFilter, filterText); // Aplica el filtro con la columna y texto
-    } else {
-      alert('Selecciona un campo para filtrar.');
+      onFilterApply(selectedFilter, text);
     }
   };
 
@@ -47,16 +46,9 @@ const FiltradoAgregado = ({
             type="text"
             placeholder={filterPlaceholder}
             value={filterText}
-            onChange={(e) => onFilterTextChange(e.target.value)} // Notifica cambios al padre
+            onChange={(e) => handleFilterChange(e.target.value)}
             className="filter-input"
           />
-          <button
-            className="filter-search-button"
-            onClick={handleSearchClick}
-            title="Buscar"
-          >
-            <FaSearch className="filter-search-icon" />
-          </button>
         </div>
       </div>
 
@@ -84,14 +76,14 @@ FiltradoAgregado.propTypes = {
       label: PropTypes.string.isRequired,
     })
   ).isRequired,
-  filterText: PropTypes.string.isRequired, // Texto del filtro
+  filterText: PropTypes.string.isRequired,
   filterLabel: PropTypes.string,
   filterPlaceholder: PropTypes.string,
   addLabel: PropTypes.string,
   onFilterApply: PropTypes.func.isRequired,
   onAddClick: PropTypes.func.isRequired,
   onClearFilter: PropTypes.func.isRequired,
-  onFilterTextChange: PropTypes.func.isRequired, // Maneja cambios en el texto del filtro
+  onFilterTextChange: PropTypes.func.isRequired,
 };
 
 export default FiltradoAgregado;
