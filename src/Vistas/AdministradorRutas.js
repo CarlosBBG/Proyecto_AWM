@@ -19,30 +19,29 @@ const AdministradorRutas = () => {
 
   const columns = [
     { header: 'ID', accessor: 'id' },
-    { header: 'Ruta', accessor: 'ruta' },
-    { header: 'Recorrido', accessor: 'recorrido' },
+    { header: 'Ruta', accessor: 'nombre' },
     { header: 'Paradas', accessor: 'paradas' },
   ];
 
   const filterOptions = [
     { value: 'id', label: 'ID' },
-    { value: 'ruta', label: 'Ruta' },
-    { value: 'recorrido', label: 'Recorrido' },
+    { value: 'nombre', label: 'Ruta' },
     { value: 'paradas', label: 'Paradas' },
   ];
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/rutas');
-      const numericData = response.data.map((item) => ({
-        ...item,
-        id: Number(item.id),
-      }));
-      setData(numericData);
+        const response = await axios.get('http://localhost:8000/rutas');
+        const numericData = response.data.map((item) => ({
+            ...item,
+            id: Number(item.id),
+            paradas: item.paradas.map(p => p.nombre).join(', ') // Convertir a string
+        }));
+        setData(numericData);
     } catch (error) {
-      console.error('Error al cargar los datos:', error);
+        console.error('Error al cargar los datos:', error);
     }
-  };
+};
 
   const fetchAdminData = () => {
     const adminData = localStorage.getItem('usuario');
@@ -77,35 +76,53 @@ const AdministradorRutas = () => {
   const handleAddClick = () => {
     setCurrentRecord({
       id: null,
-      ruta: '',
-      recorrido: '',
+      nombre: '',
       paradas: '',
     });
     setIsModalOpen(true);
   };
 
   const handleEditClick = (record) => {
-    setCurrentRecord(record);
+    setCurrentRecord({
+        id: record.id,
+        nombre: record.nombre, // Usa 'nombre' en lugar de 'ruta'
+        paradas: record.paradas
+    });
     setIsModalOpen(true);
-  };
+};
 
-  const handleSave = async (newRecord) => {
-    try {
-      if (currentRecord && currentRecord.id !== null) {
-        const updatedRecord = { ...newRecord, id: String(currentRecord.id) };
-        await axios.put(`http://localhost:3001/rutas/${currentRecord.id}`, updatedRecord);
+const handleSave = async (newRecord) => {
+  try {
+      let rutaId = currentRecord?.id || null;
+
+      // Convertir el string de paradas en un array
+      const formattedRecord = {
+          nombre: newRecord.nombre,
+          descripcion: newRecord.descripcion || '', // Asegura que descripción no sea null
+          paradas: newRecord.paradas ? newRecord.paradas.split(',').map(p => p.trim()) : []
+      };
+
+      if (rutaId) {
+          // Edición (PUT): Actualiza la ruta y reemplaza sus paradas
+          await axios.put(`http://localhost:8000/rutas/${rutaId}`, formattedRecord);
       } else {
-        const newId = data.length > 0 ? String(Math.max(...data.map((item) => Number(item.id))) + 1) : '1';
-        const recordToAdd = { id: newId, ...newRecord };
-        await axios.post('http://localhost:3001/rutas', recordToAdd);
+          // Creación (POST): Primero crea la ruta, luego las paradas
+          const response = await axios.post('http://localhost:8000/rutas', formattedRecord);
+          rutaId = response.data.id; // Obtiene el ID de la ruta recién creada
       }
+
+      // Enviar las paradas con su id de ruta correspondiente
+      if (formattedRecord.paradas.length > 0) {
+          await axios.post(`http://localhost:8000/rutas/${rutaId}/paradas`, { paradas: formattedRecord.paradas });
+      }
+
       fetchData();
       setIsModalOpen(false);
       setCurrentRecord(null);
-    } catch (error) {
+  } catch (error) {
       console.error('Error al guardar el registro:', error);
-    }
-  };
+  }
+};
 
   const openDeleteModal = (id) => {
     setRecordToDelete(id);
@@ -114,7 +131,7 @@ const AdministradorRutas = () => {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:3001/rutas/${recordToDelete}`);
+      await axios.delete(`http://localhost:8000/rutas/${recordToDelete}`);
       fetchData();
       setIsDeleteModalOpen(false);
       setRecordToDelete(null);
@@ -177,23 +194,11 @@ const AdministradorRutas = () => {
           fields={[
             {
               label: 'Ruta',
-              name: 'ruta',
-              value: currentRecord?.ruta || '',
-              onChange: (value) => setCurrentRecord((prev) => ({ ...prev, ruta: value })),
+              name: 'nombre',
+              value: currentRecord?.nombre || '',
+              onChange: (value) => setCurrentRecord((prev) => ({ ...prev, nombre: value })),
               validate: (value) =>
                 /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(value) ? '' : 'La ruta solo debe contener letras.',
-            },
-            {
-              label: 'Recorrido',
-              name: 'recorrido',
-              value: currentRecord?.recorrido || '',
-              multiline: true,
-              className: 'campo-amplio',
-              onChange: (value) => setCurrentRecord((prev) => ({ ...prev, recorrido: value })),
-              validate: (value) =>
-                /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,():-]+$/.test(value)
-                  ? ''
-                  : 'El recorrido solo puede contener letras, números, comas, puntos y guiones.',
             },
             {
               label: 'Paradas',
