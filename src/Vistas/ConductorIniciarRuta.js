@@ -19,8 +19,9 @@ function ConductorIniciarRuta() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("usuario");
-    if (!storedUser) {
-      console.warn("No hay conductor en localStorage. Redirigiendo al login...");
+    const token = localStorage.getItem("token");
+    if (!storedUser || !token) {
+      console.warn("No hay conductor o token en localStorage. Redirigiendo al login...");
       navigate("/"); 
       return;
     }
@@ -29,24 +30,32 @@ function ConductorIniciarRuta() {
     const conductorId = userData.id;
 
     axios
-  .get(`http://localhost:8000/conductores/${conductorId}/paradas`)
-  .then((response) => {
-    console.log("Paradas de la ruta recibidas:", response.data);
-    // Accedemos al array de paradas dentro del objeto de respuesta
-    if (response.data && Array.isArray(response.data.paradas)) {
-      setParadas(response.data.paradas); // Guardar solo el array de paradas
-    } else {
-      console.error("La respuesta no contiene un array de paradas:", response.data);
-      setParadas([]); // En caso de error, inicializar como un array vacío
-    }
-  })
-  .catch((error) => {
-    console.error("Error al cargar las paradas de la ruta:", error);
-    setParadas([]); // Manejar el error y evitar que quede undefined
-  });
+      .get(`http://localhost:8000/conductores/${conductorId}/paradas`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log("Paradas de la ruta recibidas:", response.data);
+        // Accedemos al array de paradas dentro del objeto de respuesta
+        if (response.data && Array.isArray(response.data.paradas)) {
+          setParadas(response.data.paradas); // Guardar solo el array de paradas
+        } else {
+          console.error("La respuesta no contiene un array de paradas:", response.data);
+          setParadas([]); // En caso de error, inicializar como un array vacío
+        }
+      })
+      .catch((error) => {
+        console.error("Error al cargar las paradas de la ruta:", error);
+        setParadas([]); // Manejar el error y evitar que quede undefined
+      });
 
     axios
-      .get(`http://localhost:8000/conductores/${conductorId}`)
+      .get(`http://localhost:8000/conductores/${conductorId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log("Conductor recibido:", response.data);
         setConductor(response.data);
@@ -54,7 +63,7 @@ function ConductorIniciarRuta() {
       .catch((error) => {
         console.error("Error al cargar los datos del conductor:", error);
       });
-  }, []);
+  }, [navigate]);
 
   const iniciarRuta = () => {
     alert("La ruta ha sido iniciada.");
@@ -67,10 +76,7 @@ function ConductorIniciarRuta() {
 
   return (
     <div className="iniciar-ruta">
-      
-        <Encabezado />
-      
-      
+      <Encabezado />
       <div className="ruta-container">
         {conductor ? (
           <BarraLateral
@@ -89,7 +95,6 @@ function ConductorIniciarRuta() {
           textoBoton="Comenzar"
           onIniciarRuta={iniciarRuta}
           paradas={paradas}
-         
         />
       </div>
     </div>

@@ -17,8 +17,9 @@ function EstudiantePantallaInicio() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("usuario");
-    if (!storedUser) {
-      console.warn("No hay estudiante en localStorage. Redirigiendo...");
+    const token = localStorage.getItem("token");
+    if (!storedUser || !token) {
+      console.warn("No hay estudiante o token en localStorage. Redirigiendo...");
       window.location.href = "/";
       return;
     }
@@ -27,7 +28,11 @@ function EstudiantePantallaInicio() {
     const estudianteId = userData.id; // Asegúrate de que tu backend use esta clave
 
     axios
-      .get(`http://localhost:8000/estudiantes/${estudianteId}`)
+      .get(`http://localhost:8000/estudiantes/${estudianteId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log("Estudiante recibido:", response.data);
         setEstudiante(response.data);

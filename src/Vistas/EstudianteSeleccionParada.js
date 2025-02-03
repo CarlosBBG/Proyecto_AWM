@@ -20,8 +20,9 @@ function EstudianteSeleccionParada() {
 
     useEffect(() => {
         const storedUser = localStorage.getItem("usuario");
-        if (!storedUser) {
-            console.warn("No hay estudiante en localStorage. Redirigiendo...");
+        const token = localStorage.getItem("token");
+        if (!storedUser || !token) {
+            console.warn("No hay estudiante o token en localStorage. Redirigiendo...");
             window.location.href = "/";
             return;
         }
@@ -30,7 +31,11 @@ function EstudianteSeleccionParada() {
         const estudianteId = userData.id;
 
         axios
-            .get(`http://localhost:8000/estudiantes/${estudianteId}`)
+            .get(`http://localhost:8000/estudiantes/${estudianteId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
             .then((response) => {
                 console.log("Estudiante recibido:", response.data);
                 setEstudiante(response.data);
@@ -41,7 +46,11 @@ function EstudianteSeleccionParada() {
                     return;
                 }
 
-                return axios.get(`http://localhost:8000/estudiantes/${estudianteId}/paradas`);
+                return axios.get(`http://localhost:8000/estudiantes/${estudianteId}/paradas`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
             })
             .then((response) => {
                 if (response?.data) {
@@ -50,7 +59,11 @@ function EstudianteSeleccionParada() {
 
                     if (response.data.length > 0) {
                         const rutaId = response.data[0].ruta;
-                        return axios.get(`http://localhost:8000/rutas/${rutaId}`);
+                        return axios.get(`http://localhost:8000/rutas/${rutaId}`, {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        });
                     }
                 }
             })
@@ -79,12 +92,16 @@ function EstudianteSeleccionParada() {
         }
     };
 
-
     const handleAccept = () => {
-        if (!pendingParadaId) return;
+        const token = localStorage.getItem("token");
+        if (!pendingParadaId || !token) return;
 
         axios
-            .put(`http://localhost:8000/estudiantes/${estudiante.id}/paradas`, { parada: pendingParadaId })
+            .put(`http://localhost:8000/estudiantes/${estudiante.id}/paradas`, { parada: pendingParadaId }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
             .then((response) => {
                 console.log(`Parada ${pendingParadaId} asignada al estudiante ${estudiante.id}.`);
 
@@ -107,14 +124,20 @@ function EstudianteSeleccionParada() {
             });
     };
 
-
     const handleCancel = () => {
         setPendingParadaId(null);
     };
 
     const handleRemoveSelection = () => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
         axios
-            .put(`http://localhost:8000/estudiantes/${estudiante.id}/paradas`, { parada: null })
+            .put(`http://localhost:8000/estudiantes/${estudiante.id}/paradas`, { parada: null }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
             .then(() => {
                 console.log(`Parada eliminada para el estudiante ${estudiante.id}.`);
                 setSelectedParadaId(null);
@@ -144,7 +167,7 @@ function EstudianteSeleccionParada() {
                     <p>Cargando datos del estudiante...</p>
                 )}
                 <div className="estudiante-paradas">
-                <h1>Seleccione su parada:</h1>
+                    <h1>Seleccione su parada:</h1>
                     <div className="paradas-container">
                         {!estudiante?.ruta ? (
                             <h2 style={{ color: 'red' }}>
@@ -152,7 +175,6 @@ function EstudianteSeleccionParada() {
                             </h2>
                         ) : (
                             <>
-                                
                                 {paradas.map((parada) => (
                                     <div
                                         key={parada.id}
@@ -185,10 +207,10 @@ function EstudianteSeleccionParada() {
                         )}
                     </div>
                     {selectedParadaId && (
-                                    <button className="remove-button" onClick={handleRemoveSelection}>
-                                        Quitar Parada
-                                    </button>
-                                )}
+                        <button className="remove-button" onClick={handleRemoveSelection}>
+                            Quitar Parada
+                        </button>
+                    )}
                     {asientosDisponibles !== null && (
                         <p id="seats-available" className="seats-available">
                             Asientos disponibles: {asientosDisponibles}

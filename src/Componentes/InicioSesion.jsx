@@ -17,19 +17,20 @@ const InicioSesion = () => {
         password: password,
       });
 
-      // El servidor responde con el usuario y role: "admin" o "conductor"
-      const userData = response.data;
-      console.log('Usuario logueado:', userData);
+      // El servidor responde con el usuario y el token
+      const { token, ...user } = response.data;
+      console.log('Usuario logueado:', user);
 
-      // Guardar en localStorage
-      localStorage.setItem('usuario', JSON.stringify(userData));
+      // Guardar el usuario y el token en localStorage
+      localStorage.setItem('usuario', JSON.stringify(user));
+      localStorage.setItem('token', token);
 
       // Redirigir según el role
-      if (userData.role === 'admin') {
+      if (user.role === 'admin') {
         navigate('/administrador/inicio');
-      } else if (userData.role === 'conductor') {
+      } else if (user.role === 'conductor') {
         navigate('/conductor/inicio');
-      } else if (userData.role === 'estudiante') {
+      } else if (user.role === 'estudiante') {
         navigate('/estudiante/inicio');
       } else {
         // Fallback si en un futuro agregas más roles

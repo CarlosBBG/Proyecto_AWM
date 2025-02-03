@@ -19,8 +19,9 @@ const EstudianteSeleccionRuta = () => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("usuario");
-    if (!storedUser) {
-      console.warn("No hay estudiante en localStorage. Redirigiendo...");
+    const token = localStorage.getItem("token");
+    if (!storedUser || !token) {
+      console.warn("No hay estudiante o token en localStorage. Redirigiendo...");
       window.location.href = "/";
       return;
     }
@@ -29,7 +30,11 @@ const EstudianteSeleccionRuta = () => {
     const estudianteId = userData.id;
 
     axios
-      .get(`http://localhost:8000/estudiantes/${estudianteId}`)
+      .get(`http://localhost:8000/estudiantes/${estudianteId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log("Estudiante recibido:", response.data);
         setEstudiante(response.data);
@@ -41,7 +46,12 @@ const EstudianteSeleccionRuta = () => {
   }, []);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/rutas')
+    const token = localStorage.getItem("token");
+    axios.get('http://localhost:8000/rutas', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => {
         console.log("Rutas cargadas:", response.data);
         setRutas(response.data);
@@ -70,12 +80,16 @@ const EstudianteSeleccionRuta = () => {
     }
   };
 
-
   const handleAccept = () => {
-    if (!pendingRutaId) return;
+    const token = localStorage.getItem("token");
+    if (!pendingRutaId || !token) return;
 
     axios
-      .put(`http://localhost:8000/estudiantes/${estudiante.id}/ruta`, { ruta: pendingRutaId })
+      .put(`http://localhost:8000/estudiantes/${estudiante.id}/ruta`, { ruta: pendingRutaId }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then(() => {
         console.log(`Ruta ${pendingRutaId} asignada al estudiante ${estudiante.id}.`);
         setSelectedRutaId(pendingRutaId);
@@ -93,8 +107,15 @@ const EstudianteSeleccionRuta = () => {
   };
 
   const handleRemoveRuta = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
     axios
-      .put(`http://localhost:8000/estudiantes/${estudiante.id}/ruta`, { ruta: null })
+      .put(`http://localhost:8000/estudiantes/${estudiante.id}/ruta`, { ruta: null }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then(() => {
         console.log(`Ruta eliminada del estudiante ${estudiante.id}.`);
         setSelectedRutaId(null);
@@ -121,9 +142,8 @@ const EstudianteSeleccionRuta = () => {
           <p>Cargando datos del estudiante...</p>
         )}
         <section className="pantalla-estudiante-seleccion-de-parada-container4">
-        <h1>Seleccione su ruta:</h1>
+          <h1>Seleccione su ruta:</h1>
           <div className="container">
-            
             {rutas.map((ruta) => (
               <div
                 key={ruta.id}
@@ -152,8 +172,6 @@ const EstudianteSeleccionRuta = () => {
                 )}
               </div>
             ))}
-
-
           </div>
           {selectedRutaId && (
             <button className="remove-button" onClick={handleRemoveRuta}>

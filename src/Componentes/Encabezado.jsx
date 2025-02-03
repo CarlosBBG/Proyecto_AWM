@@ -7,7 +7,9 @@ const Encabezado = ({ logoSrc, text }) => {
   const navigate = useNavigate(); // Hook para navegar
 
   const handleLogout = () => {
-    navigate("/"); // Redirige al login
+    //Eliminar el usuario del localStorage
+    localStorage.removeItem("usuario");
+    navigate("/");
   };
 
   return (

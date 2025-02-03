@@ -18,8 +18,9 @@ const EstudianteRutaCheck = () => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("usuario");
-    if (!storedUser) {
-      console.warn("No hay estudiante en localStorage. Redirigiendo...");
+    const token = localStorage.getItem("token");
+    if (!storedUser || !token) {
+      console.warn("No hay estudiante o token en localStorage. Redirigiendo...");
       window.location.href = "/";
       return;
     }
@@ -27,9 +28,13 @@ const EstudianteRutaCheck = () => {
     const userData = JSON.parse(storedUser);
     const estudianteId = userData.id;
 
-    // Cargar los datos del estudiante y despues de la parada del estudiante /estudiantes/:id/paradas
+    // Cargar los datos del estudiante y después las paradas del estudiante
     axios
-      .get(`http://localhost:8000/estudiantes/${estudianteId}`)
+      .get(`http://localhost:8000/estudiantes/${estudianteId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log("Estudiante recibido:", response.data);
         setEstudiante(response.data);
@@ -40,7 +45,11 @@ const EstudianteRutaCheck = () => {
 
     // Cargar las paradas del estudiante
     axios
-      .get(`http://localhost:8000/estudiantes/${estudianteId}/paradas`)
+      .get(`http://localhost:8000/estudiantes/${estudianteId}/paradas`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log("Paradas del estudiante recibidas:", response.data);
         setParadas(response.data);
@@ -48,8 +57,6 @@ const EstudianteRutaCheck = () => {
       .catch((error) => {
         console.error("Error al cargar las paradas del estudiante:", error);
       });
-    
-    
   }, []);
 
   return (
@@ -69,8 +76,8 @@ const EstudianteRutaCheck = () => {
           <p>Cargando datos del estudiante...</p>
         )}
         <section className="pantalla-estudiante-seleccion-de-parada-container4">
-        <div className="MapaInteractivo">
-          <h1>SIGA EL ESTADO DE LA RUTA</h1>
+          <div className="MapaInteractivo">
+            <h1>SIGA EL ESTADO DE LA RUTA</h1>
             <MapaInteractivo paradas={paradas} />
           </div>
         </section>

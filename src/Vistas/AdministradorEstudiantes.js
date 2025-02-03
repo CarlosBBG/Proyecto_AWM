@@ -37,13 +37,14 @@ const AdministradorEstudiantes = () => {
   ];
 
   const fetchData = async () => {
+    const token = localStorage.getItem('token');
     try {
-      const response = await axios.get('http://localhost:8000/estudiantes');
-      const numericData = response.data.map((item) => ({
-        ...item,
-        id: Number(item.id), // Asegúrate de que el id sea un número
-      }));
-      setData(numericData);
+      const response = await axios.get('http://localhost:8000/estudiantes', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setData(response.data);
     } catch (error) {
       console.error('Error al cargar los datos:', error);
     }
@@ -64,23 +65,32 @@ const AdministradorEstudiantes = () => {
   }, []);
 
   const handleSave = async (newRecord) => {
+    const token = localStorage.getItem('token');
     try {
       const recordToAdd = {
         nombre: newRecord.nombre,
         apellido: newRecord.apellido,
         correo: newRecord.correo,
-        password: newRecord.password, // Asegúrate de incluir el campo password
+        password: newRecord.password,
         codigoUnico: newRecord.codigoUnico,
         ruta: newRecord.ruta,
       };
 
       if (currentRecord && currentRecord.id !== null) {
         const updatedRecord = { ...recordToAdd, id: currentRecord.id };
-        console.log('Datos enviados para actualizar:', updatedRecord); // Verificar los datos enviados
-        await axios.put(`http://localhost:8000/estudiantes/${currentRecord.id}`, updatedRecord);
+        console.log('Datos enviados para actualizar:', updatedRecord);
+        await axios.put(`http://localhost:8000/estudiantes/${currentRecord.id}`, updatedRecord, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       } else {
-        console.log('Datos enviados para crear:', recordToAdd); // Verificar los datos enviados
-        await axios.post('http://localhost:8000/estudiantes', recordToAdd);
+        console.log('Datos enviados para crear:', recordToAdd);
+        await axios.post('http://localhost:8000/estudiantes', recordToAdd, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
       fetchData();
       setIsModalOpen(false);
@@ -100,15 +110,20 @@ const AdministradorEstudiantes = () => {
   };
 
   const confirmDelete = async () => {
+    const token = localStorage.getItem('token');
     try {
       if (!recordToDelete) {
         console.error('No hay un ID válido para eliminar.');
         return;
       }
-      await axios.delete(`http://localhost:3001/estudiantes/${recordToDelete}`);
-      fetchData(); // Recargar los datos después de eliminar
+      await axios.delete(`http://localhost:8000/estudiantes/${recordToDelete}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchData();
       setIsDeleteModalOpen(false);
-      setRecordToDelete(null); // Limpiar estado
+      setRecordToDelete(null);
     } catch (error) {
       console.error('Error al eliminar el registro:', error);
     }
@@ -116,7 +131,7 @@ const AdministradorEstudiantes = () => {
 
   const cancelDelete = () => {
     setIsDeleteModalOpen(false);
-    setRecordToDelete(null); // Limpiar estado
+    setRecordToDelete(null);
   };
 
   const handleFilterApply = (selectedFilter, text) => {
@@ -185,7 +200,7 @@ const AdministradorEstudiantes = () => {
             columns={columns}
             data={filteredData}
             onEditClick={handleEditClick}
-            onDeleteClick={openDeleteModal} // Llamada a la confirmación de eliminación
+            onDeleteClick={openDeleteModal}
           />
         </div>
       </div>
@@ -246,7 +261,7 @@ const AdministradorEstudiantes = () => {
             {
               label: 'Password',
               name: 'password',
-              type: 'password', // Asegúrate de que el campo tenga el tipo 'password'
+              type: 'password',
               value: currentRecord?.password || '',
               onChange: (value) => {
                 setCurrentRecord((prev) => ({ ...prev, password: value }));

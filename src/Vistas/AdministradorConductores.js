@@ -36,18 +36,40 @@ const AdministradorConductores = () => {
 
   // Cargar datos del administrador
   useEffect(() => {
-    const adminData = localStorage.getItem('usuario');
-    if (adminData) {
-      setAdministrador(JSON.parse(adminData));
+    const adminData = localStorage.getItem("usuario");
+    const token = localStorage.getItem("token");
+
+    if (adminData && token) {
+      const parsedData = JSON.parse(adminData);
+      setAdministrador(parsedData);
+
+      // Opcional: Si necesitas hacer una solicitud al backend para obtener más datos del administrador
+      axios.get(`http://localhost:8000/administradores/${parsedData.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(response => {
+        setAdministrador(response.data);
+      })
+      .catch(error => {
+        console.error('Error al cargar los datos del administrador:', error);
+      });
     } else {
-      window.location.href = '/'; // Redirigir al inicio de sesión si no hay datos
+      // Si no hay información en localStorage, redirigir al inicio de sesión
+      window.location.href = "/";
     }
   }, []);
 
   // Cargar datos desde el servidor
   const fetchData = async () => {
+    const token = localStorage.getItem('token');
     try {
-      const response = await axios.get('http://localhost:8000/conductores');
+      const response = await axios.get('http://localhost:8000/conductores', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const numericData = response.data.map((item) => ({
         ...item,
         id: Number(item.id), // Asegúrate de que el id sea un número
@@ -79,12 +101,17 @@ const AdministradorConductores = () => {
   };
 
   const confirmDelete = async () => {
+    const token = localStorage.getItem('token');
     try {
       if (!recordToDelete) {
         console.error('No hay un ID válido para eliminar.');
         return;
       }
-      await axios.delete(`http://localhost:8000/conductores/${recordToDelete}`);
+      await axios.delete(`http://localhost:8000/conductores/${recordToDelete}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchData(); // Recargar los datos después de eliminar
       setIsDeleteModalOpen(false);
       setRecordToDelete(null); // Limpiar estado
@@ -128,13 +155,12 @@ const AdministradorConductores = () => {
   };
 
   const handleEditClick = (record) => {
-    // Podrías asignar record.password = '' si no quieres mostrar
-    // el password actual. O podrías mostrarlo si el backend lo devuelve.
     setCurrentRecord(record);
     setIsModalOpen(true);
   };
 
   const handleSave = async (newRecord) => {
+    const token = localStorage.getItem('token');
     try {
       // Combinar los valores actuales con los nuevos
       const updatedRecord = { ...currentRecord, ...newRecord };
@@ -158,11 +184,20 @@ const AdministradorConductores = () => {
         // Actualizar un registro existente
         await axios.put(
           `http://localhost:8000/conductores/${updatedRecord.id}`,
-          updatedRecord
+          updatedRecord,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
       } else {
         // Crear un nuevo registro
-        await axios.post('http://localhost:8000/conductores', updatedRecord);
+        await axios.post('http://localhost:8000/conductores', updatedRecord, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
 
       fetchData(); // Recargar datos después de guardar

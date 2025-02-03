@@ -4,6 +4,7 @@ import Encabezado from "../Componentes/Encabezado";
 import BarraLateral from "../Componentes/BarraLateral";
 import "./ConductorPantallaInicio.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function ConductorPantallaInicio() {
   const menuItems = [
@@ -14,13 +15,16 @@ function ConductorPantallaInicio() {
 
   const [conductor, setConductor] = useState(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     // 1) Revisar si en localStorage está el usuario
     const storedUser = localStorage.getItem("usuario");
-    if (!storedUser) {
+    const token = localStorage.getItem("token");
+    if (!storedUser || !token) {
       // No hay usuario logueado, podrías redirigir al login
-      console.warn("No hay conductor en localStorage. Redirigiendo...");
-      // navigate("/") o algo similar
+      console.warn("No hay conductor o token en localStorage. Redirigiendo...");
+      navigate("/");
       return;
     }
 
@@ -30,7 +34,11 @@ function ConductorPantallaInicio() {
 
     // 3) Hacer la consulta GET usando el ID real
     axios
-      .get(`http://localhost:8000/conductores/${conductorId}`)
+      .get(`http://localhost:8000/conductores/${conductorId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log("Conductor recibido:", response.data);
         setConductor(response.data);
@@ -38,7 +46,7 @@ function ConductorPantallaInicio() {
       .catch((error) => {
         console.error("Error al cargar datos del conductor:", error);
       });
-  }, []);
+  }, [navigate]);
 
   const mensaje = `Bienvenido al Sistema de Transporte Estudiantil`;
   const imagen = "/polibus-logo-500h.png";

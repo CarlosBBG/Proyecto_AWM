@@ -21,8 +21,9 @@ function ConductorRutaCheck() {
   useEffect(() => {
     // 1) Revisar si en localStorage está el usuario logueado
     const storedUser = localStorage.getItem("usuario");
-    if (!storedUser) {
-      console.warn("No hay conductor en localStorage. Redirigiendo al login...");
+    const token = localStorage.getItem("token");
+    if (!storedUser || !token) {
+      console.warn("No hay conductor o token en localStorage. Redirigiendo al login...");
       navigate("/"); // Redirigir al login si no hay usuario en sesión
       return;
     }
@@ -33,7 +34,11 @@ function ConductorRutaCheck() {
 
     // 3) Llamar al endpoint para obtener la ruta y paradas del conductor
     axios
-      .get(`http://localhost:8000/conductores/${conductorId}/paradas`)
+      .get(`http://localhost:8000/conductores/${conductorId}/paradas`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log("Datos de la ruta y paradas recibidos:", response.data);
         setRutaInfo(response.data); // Guardar la ruta y sus paradas
@@ -44,7 +49,11 @@ function ConductorRutaCheck() {
 
     // 4) Llamar al endpoint para obtener el nombre de la ruta
     axios
-      .get(`http://localhost:8000/conductores/${conductorId}`)
+      .get(`http://localhost:8000/conductores/${conductorId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log("Nombre de la ruta recibido:", response.data);
         setConductor(response.data);
@@ -79,21 +88,20 @@ function ConductorRutaCheck() {
           <p>Cargando datos del conductor...</p>
         )}
         <div className="conductor-ruta-check-paradas">
-
-        {rutaInfo && conductor && conductor.rutaData ? (
-          <>
-            <ConductorRutaCheckInicio
-              titulo={conductor.rutaData.nombre} // Mostrar el nombre de la ruta
-              paradas={rutaInfo.paradas.map((parada) => parada.nombre)} // Extraemos los nombres de las paradas
-              onBotonClick={detenerRuta}
-            />
-            
-            {/* Mapa Interactivo */}
-            <MapaInteractivo paradas={rutaInfo.paradas} />
-          </>
-        ) : (
-          <p>Cargando datos de la ruta y paradas...</p>
-        )}
+          {rutaInfo && conductor && conductor.rutaData ? (
+            <>
+              <ConductorRutaCheckInicio
+                titulo={conductor.rutaData.nombre} // Mostrar el nombre de la ruta
+                paradas={rutaInfo.paradas.map((parada) => parada.nombre)} // Extraemos los nombres de las paradas
+                onBotonClick={detenerRuta}
+              />
+              
+              {/* Mapa Interactivo */}
+              <MapaInteractivo paradas={rutaInfo.paradas} />
+            </>
+          ) : (
+            <p>Cargando datos de la ruta y paradas...</p>
+          )}
         </div>
       </div>
     </div>
