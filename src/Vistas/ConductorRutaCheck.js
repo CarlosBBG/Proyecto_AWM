@@ -66,10 +66,63 @@ function ConductorRutaCheck() {
     setConductor(userData);
   }, [navigate]);
 
+  const [paradasRecorridas, setParadasRecorridas] = useState([]);
+  const [indiceParada, setIndiceParada] = useState(0);
+  const [simulacionActiva, setSimulacionActiva] = useState(false);
+
+  useEffect(() => {
+    const simulacionEnCurso = localStorage.getItem("simulacionEnCurso");
+  
+    if (simulacionEnCurso === "true" && rutaInfo?.paradas?.length > 0) {
+      setSimulacionActiva(true);
+      let index = parseInt(localStorage.getItem("paradaActual")) || 0;
+      setIndiceParada(index);
+  
+      const interval = setInterval(() => {
+        // Verificar que rutaInfo y paradas existan antes de acceder
+        if (!rutaInfo || !rutaInfo.paradas || rutaInfo.paradas.length === 0) {
+          console.error("No hay información de paradas disponible.");
+          clearInterval(interval);
+          setSimulacionActiva(false);
+          return;
+        }
+      
+        // 🛑 **Verificamos que aún haya paradas disponibles**
+        if (index < rutaInfo.paradas.length) {
+          setParadasRecorridas((prev) => [...prev, rutaInfo.paradas[index]?.nombre || "Parada desconocida"]);
+          index++;
+          setIndiceParada(index);
+          localStorage.setItem("paradaActual", index);
+        } 
+      
+        // 🛑 **Si el bus llegó a la última parada, detenemos la simulación**
+        if (index >= rutaInfo.paradas.length) {
+          clearInterval(interval);
+          setSimulacionActiva(false);
+          localStorage.removeItem("simulacionEnCurso");
+          localStorage.removeItem("paradaActual");
+      
+          // ⏳ **Esperar 1 segundo antes de mostrar la alerta y redirigir**
+          setTimeout(() => {
+            alert("🚏 Fin de la ruta. Redirigiendo a la pantalla de inicio...");
+            navigate("/conductor/iniciar-ruta");
+          }, 1000);
+        }
+      }, 5000);      
+  
+      return () => clearInterval(interval); // Limpieza del intervalo al desmontar
+    }
+  }, [rutaInfo]);
+
   const detenerRuta = () => {
+    localStorage.removeItem("simulacionEnCurso");
+    localStorage.removeItem("paradaActual");
+    setSimulacionActiva(false);
+    setParadasRecorridas([]);
     alert("La ruta ha sido detenida.");
     navigate("/conductor/iniciar-ruta");
   };
+
 
   return (
     <div className="conductor-ruta-check">
@@ -88,14 +141,20 @@ function ConductorRutaCheck() {
           <p>Cargando datos del conductor...</p>
         )}
         <div className="conductor-ruta-check-paradas">
-          {rutaInfo && conductor && conductor.rutaData ? (
+  {/* Mensaje de fin de la ruta */}
+  {paradasRecorridas.length === rutaInfo?.paradas?.length && (
+    <h2 style={{ color: "green", textAlign: "center", fontSize: "20px" }}>
+      🚏 Fin de la ruta
+    </h2>
+  )}
+    {rutaInfo && conductor && conductor.rutaData ? (
             <>
               <ConductorRutaCheckInicio
                 titulo={conductor.rutaData.nombre} // Mostrar el nombre de la ruta
-                paradas={rutaInfo.paradas.map((parada) => parada.nombre)} // Extraemos los nombres de las paradas
+                paradas={paradasRecorridas} // Solo mostrar paradas recorridas                
                 onBotonClick={detenerRuta}
               />
-              
+
               {/* Mapa Interactivo */}
               <MapaInteractivo paradas={rutaInfo.paradas} />
             </>

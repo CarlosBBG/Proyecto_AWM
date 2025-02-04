@@ -65,10 +65,13 @@ function ConductorIniciarRuta() {
       });
   }, [navigate]);
 
-  const iniciarRuta = () => {
+  const iniciarSimulacion = () => {
+    localStorage.setItem("simulacionEnCurso", "true");
+    localStorage.setItem("paradaActual", "0"); // Inicia en la primera parada
     alert("La ruta ha sido iniciada.");
     navigate("/conductor/ruta-check");
   };
+  
 
   const tituloRuta = conductor?.rutaData
     ? `RUTA: ${conductor.rutaData.nombre}`
@@ -93,7 +96,7 @@ function ConductorIniciarRuta() {
           claseContenedor="ruta-personalizada"
           tituloRuta={tituloRuta}
           textoBoton="Comenzar"
-          onIniciarRuta={iniciarRuta}
+          onIniciarRuta={iniciarSimulacion}
           paradas={paradas}
         />
       </div>
