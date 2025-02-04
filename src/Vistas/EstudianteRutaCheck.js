@@ -1,13 +1,17 @@
 import './EstudianteRutaCheck.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { io } from "socket.io-client"; // 📌 Importamos socket.io
 import BarraLateral from '../Componentes/BarraLateral';
 import Encabezado from '../Componentes/Encabezado';
 import MapaInteractivo from '../Componentes/MapaInteractivo';
 
+const socket = io("http://localhost:8000"); // 📡 Conectamos con el servidor WebSockets
+
 const EstudianteRutaCheck = () => {
   const [estudiante, setEstudiante] = useState(null);
   const [paradas, setParadas] = useState([]);
+  const [rutaId, setRutaId] = useState(null); // Guardar el ID de la ruta
 
   const menuItems = [
     { label: "Inicio", link: "/estudiante/inicio" },
@@ -28,36 +32,49 @@ const EstudianteRutaCheck = () => {
     const userData = JSON.parse(storedUser);
     const estudianteId = userData.id;
 
-    // Cargar los datos del estudiante y después las paradas del estudiante
+    // Cargar los datos del estudiante y obtener su ruta
     axios
       .get(`http://localhost:8000/estudiantes/${estudianteId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         console.log("Estudiante recibido:", response.data);
         setEstudiante(response.data);
+        setRutaId(response.data.ruta); // 📌 Guardamos el ID de la ruta del estudiante
       })
-      .catch((error) => {
-        console.error("Error al cargar los datos del estudiante:", error);
-      });
+      .catch((error) => console.error("Error al cargar los datos del estudiante:", error));
 
     // Cargar las paradas del estudiante
     axios
       .get(`http://localhost:8000/estudiantes/${estudianteId}/paradas`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         console.log("Paradas del estudiante recibidas:", response.data);
         setParadas(response.data);
       })
-      .catch((error) => {
-        console.error("Error al cargar las paradas del estudiante:", error);
-      });
+      .catch((error) => console.error("Error al cargar las paradas del estudiante:", error));
   }, []);
+
+  useEffect(() => {
+    if (rutaId) {
+      // 📡 Escuchar actualizaciones en tiempo real de la ruta
+      socket.on(`ruta-${rutaId}`, (data) => {
+        console.log("📡 Actualización en ruta:", data);
+        setParadas(data.paradasRecorridas);
+      });
+
+      // 📡 Notificación cuando la ruta termine
+      socket.on(`ruta-${rutaId}-finalizada`, () => {
+        alert("🚏 La ruta ha finalizado.");
+      });
+
+      return () => {
+        socket.off(`ruta-${rutaId}`); // 🔴 Eliminamos el evento cuando se desmonta
+        socket.off(`ruta-${rutaId}-finalizada`);
+      };
+    }
+  }, [rutaId]); // 📌 Solo se ejecuta cuando `rutaId` cambia
 
   return (
     <div className="estudiante-ruta-check">
@@ -67,9 +84,7 @@ const EstudianteRutaCheck = () => {
           <BarraLateral
             userName={`${estudiante.nombre} ${estudiante.apellido}`}
             userRole={estudiante.rol || "Estudiante"}
-            userIcon={
-              estudiante.icono || "https://cdn-icons-png.flaticon.com/128/3135/3135810.png"
-            }
+            userIcon={estudiante.icono || "https://cdn-icons-png.flaticon.com/128/3135/3135810.png"}
             menuItems={menuItems}
           />
         ) : (
