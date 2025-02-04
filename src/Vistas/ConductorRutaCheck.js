@@ -16,7 +16,11 @@ function ConductorRutaCheck() {
 
   const [conductor, setConductor] = useState(null);
   const [rutaInfo, setRutaInfo] = useState(null);
+  const [paradasRecorridas, setParadasRecorridas] = useState([]);
   const navigate = useNavigate();
+
+  // Saber si la simulación está activa
+  const [simulacionActiva, setSimulacionActiva] = useState(false);
 
   useEffect(() => {
     // 1) Revisar si en localStorage está el usuario logueado
@@ -24,35 +28,30 @@ function ConductorRutaCheck() {
     const token = localStorage.getItem("token");
     if (!storedUser || !token) {
       console.warn("No hay conductor o token en localStorage. Redirigiendo al login...");
-      navigate("/"); // Redirigir al login si no hay usuario en sesión
+      navigate("/");
       return;
     }
 
-    // 2) Parsear y extraer el ID del conductor
     const userData = JSON.parse(storedUser);
     const conductorId = userData.id;
 
-    // 3) Llamar al endpoint para obtener la ruta y paradas del conductor
+    // 2) Obtener la ruta y paradas del conductor
     axios
       .get(`${process.env.REACT_APP_API_URL}/conductores/${conductorId}/paradas`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         console.log("Datos de la ruta y paradas recibidos:", response.data);
-        setRutaInfo(response.data); // Guardar la ruta y sus paradas
+        setRutaInfo(response.data);
       })
       .catch((error) => {
         console.error("Error al cargar la información de la ruta:", error);
       });
 
-    // 4) Llamar al endpoint para obtener el nombre de la ruta
+    // 3) Obtener el nombre de la ruta
     axios
       .get(`${process.env.REACT_APP_API_URL}/conductores/${conductorId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         console.log("Nombre de la ruta recibido:", response.data);
@@ -62,59 +61,26 @@ function ConductorRutaCheck() {
         console.error("Error al cargar el nombre de la ruta:", error);
       });
 
-    // Guardar datos básicos del conductor desde localStorage
-    setConductor(userData);
+    // 4) Revisar si la simulación está activa en localStorage
+    const simulacionEnCurso = localStorage.getItem("simulacionEnCurso");
+    if (simulacionEnCurso === "true") {
+      setSimulacionActiva(true);
+    }
   }, [navigate]);
 
-  const [paradasRecorridas, setParadasRecorridas] = useState([]);
-  const [indiceParada, setIndiceParada] = useState(0);
-  const [simulacionActiva, setSimulacionActiva] = useState(false);
+  /** Esta función se llama cuando el bus pasa cerca de una parada */
+  const handleParadaRecorrida = (nombreParada) => {
+    setParadasRecorridas((prev) => {
+      if (!prev.includes(nombreParada)) {
+        return [...prev, nombreParada];
+      }
+      return prev;
+    });
+  };
 
-  useEffect(() => {
-    const simulacionEnCurso = localStorage.getItem("simulacionEnCurso");
-  
-    if (simulacionEnCurso === "true" && rutaInfo?.paradas?.length > 0) {
-      setSimulacionActiva(true);
-      let index = parseInt(localStorage.getItem("paradaActual")) || 0;
-      setIndiceParada(index);
-  
-      const interval = setInterval(() => {
-        // Verificar que rutaInfo y paradas existan antes de acceder
-        if (!rutaInfo || !rutaInfo.paradas || rutaInfo.paradas.length === 0) {
-          console.error("No hay información de paradas disponible.");
-          clearInterval(interval);
-          setSimulacionActiva(false);
-          return;
-        }
-      
-        // 🛑 **Verificamos que aún haya paradas disponibles**
-        if (index < rutaInfo.paradas.length) {
-          setParadasRecorridas((prev) => [...prev, rutaInfo.paradas[index]?.nombre || "Parada desconocida"]);
-          index++;
-          setIndiceParada(index);
-          localStorage.setItem("paradaActual", index);
-        } 
-      
-        // 🛑 **Si el bus llegó a la última parada, detenemos la simulación**
-        if (index >= rutaInfo.paradas.length) {
-          clearInterval(interval);
-          setSimulacionActiva(false);
-          localStorage.removeItem("simulacionEnCurso");
-          localStorage.removeItem("paradaActual");
-      
-          // ⏳ **Esperar 1 segundo antes de mostrar la alerta y redirigir**
-          setTimeout(() => {
-            alert("🚏 Fin de la ruta. Redirigiendo a la pantalla de inicio...");
-            navigate("/conductor/iniciar-ruta");
-          }, 1000);
-        }
-      }, 5000);      
-  
-      return () => clearInterval(interval); // Limpieza del intervalo al desmontar
-    }
-  }, [rutaInfo]);
-
+  /** Cuando el conductor hace clic en "Detener Ruta" */
   const detenerRuta = () => {
+    // Limpieza
     localStorage.removeItem("simulacionEnCurso");
     localStorage.removeItem("paradaActual");
     setSimulacionActiva(false);
@@ -123,6 +89,16 @@ function ConductorRutaCheck() {
     navigate("/conductor/iniciar-ruta");
   };
 
+  /** Revisar si ya se recorrieron todas las paradas */
+  useEffect(() => {
+    if (rutaInfo?.paradas?.length > 0) {
+      if (paradasRecorridas.length === rutaInfo.paradas.length) {
+        // Fin de la ruta
+        alert("🚏 Fin de la ruta. Redirigiendo a la pantalla de inicio...");
+        detenerRuta();
+      }
+    }
+  }, [paradasRecorridas, rutaInfo]);
 
   return (
     <div className="conductor-ruta-check">
@@ -132,31 +108,31 @@ function ConductorRutaCheck() {
           <BarraLateral
             userName={conductor.nombre + " " + conductor.apellido}
             userRole={"Conductor"}
-            userIcon={
-              "https://cdn-icons-png.flaticon.com/128/1464/1464721.png" // Puedes ajustar según la info del conductor
-            }
+            userIcon={"https://cdn-icons-png.flaticon.com/128/1464/1464721.png"}
             menuItems={menuItems}
           />
         ) : (
           <p>Cargando datos del conductor...</p>
         )}
+        
         <div className="conductor-ruta-check-paradas">
-  {/* Mensaje de fin de la ruta */}
-  {paradasRecorridas.length === rutaInfo?.paradas?.length && (
-    <h2 style={{ color: "green", textAlign: "center", fontSize: "20px" }}>
-      🚏 Fin de la ruta
-    </h2>
-  )}
-    {rutaInfo && conductor && conductor.rutaData ? (
+          {rutaInfo && conductor && conductor.rutaData ? (
             <>
               <ConductorRutaCheckInicio
-                titulo={conductor.rutaData.nombre} // Mostrar el nombre de la ruta
-                paradas={paradasRecorridas} // Solo mostrar paradas recorridas                
+                titulo={conductor.rutaData.nombre}
+                paradas={paradasRecorridas}
                 onBotonClick={detenerRuta}
               />
-
-              {/* Mapa Interactivo */}
-              <MapaInteractivo paradas={rutaInfo.paradas} />
+              {/* 
+                Mapa Interactivo 
+                - Paradas estáticas
+                - Bus se mueve si simulacionActiva es true
+              */}
+              <MapaInteractivo
+                paradas={rutaInfo.paradas}
+                onParadaRecorrida={handleParadaRecorrida}
+                isActive={simulacionActiva} // PASAMOS EL ESTADO 
+              />
             </>
           ) : (
             <p>Cargando datos de la ruta y paradas...</p>

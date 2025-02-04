@@ -14,7 +14,7 @@ function ConductorIniciarRuta() {
   ];
 
   const [conductor, setConductor] = useState(null);
-  const [paradas, setParadas] = useState([]); // Inicializar como array vacío
+  const [paradas, setParadas] = useState([]); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ function ConductorIniciarRuta() {
     const token = localStorage.getItem("token");
     if (!storedUser || !token) {
       console.warn("No hay conductor o token en localStorage. Redirigiendo al login...");
-      navigate("/"); 
+      navigate("/");
       return;
     }
 
@@ -31,30 +31,25 @@ function ConductorIniciarRuta() {
 
     axios
       .get(`${process.env.REACT_APP_API_URL}/conductores/${conductorId}/paradas`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         console.log("Paradas de la ruta recibidas:", response.data);
-        // Accedemos al array de paradas dentro del objeto de respuesta
         if (response.data && Array.isArray(response.data.paradas)) {
-          setParadas(response.data.paradas); // Guardar solo el array de paradas
+          setParadas(response.data.paradas);
         } else {
           console.error("La respuesta no contiene un array de paradas:", response.data);
-          setParadas([]); // En caso de error, inicializar como un array vacío
+          setParadas([]);
         }
       })
       .catch((error) => {
         console.error("Error al cargar las paradas de la ruta:", error);
-        setParadas([]); // Manejar el error y evitar que quede undefined
+        setParadas([]);
       });
 
     axios
       .get(`${process.env.REACT_APP_API_URL}/conductores/${conductorId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         console.log("Conductor recibido:", response.data);
@@ -66,12 +61,12 @@ function ConductorIniciarRuta() {
   }, [navigate]);
 
   const iniciarSimulacion = () => {
+    // Activa la simulación
     localStorage.setItem("simulacionEnCurso", "true");
-    localStorage.setItem("paradaActual", "0"); // Inicia en la primera parada
-    alert("La ruta ha sido iniciada.");
+    localStorage.setItem("paradaActual", "0");
+    
     navigate("/conductor/ruta-check");
   };
-  
 
   const tituloRuta = conductor?.rutaData
     ? `RUTA: ${conductor.rutaData.nombre}`

@@ -1,17 +1,18 @@
 import './EstudianteRutaCheck.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { io } from "socket.io-client"; // 📌 Importamos socket.io
+import { io } from "socket.io-client"; 
 import BarraLateral from '../Componentes/BarraLateral';
 import Encabezado from '../Componentes/Encabezado';
 import MapaInteractivo from '../Componentes/MapaInteractivo';
 
-const socket = io(`${process.env.REACT_APP_API_URL}`); // 📡 Conectamos con el servidor WebSockets
+const socket = io(`${process.env.REACT_APP_API_URL}`);
 
 const EstudianteRutaCheck = () => {
   const [estudiante, setEstudiante] = useState(null);
   const [paradas, setParadas] = useState([]);
-  const [rutaId, setRutaId] = useState(null); // Guardar el ID de la ruta
+  const [rutaId, setRutaId] = useState(null);
+  const [simulacionActiva, setSimulacionActiva] = useState(localStorage.getItem("simulacionEnCurso") === "true");
 
   const menuItems = [
     { label: "Inicio", link: "/estudiante/inicio" },
@@ -32,7 +33,6 @@ const EstudianteRutaCheck = () => {
     const userData = JSON.parse(storedUser);
     const estudianteId = userData.id;
 
-    // Cargar los datos del estudiante y obtener su ruta
     axios
       .get(`${process.env.REACT_APP_API_URL}/estudiantes/${estudianteId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -40,11 +40,10 @@ const EstudianteRutaCheck = () => {
       .then((response) => {
         console.log("Estudiante recibido:", response.data);
         setEstudiante(response.data);
-        setRutaId(response.data.ruta); // 📌 Guardamos el ID de la ruta del estudiante
+        setRutaId(response.data.ruta);
       })
       .catch((error) => console.error("Error al cargar los datos del estudiante:", error));
 
-    // Cargar las paradas del estudiante
     axios
       .get(`${process.env.REACT_APP_API_URL}/estudiantes/${estudianteId}/paradas`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -58,23 +57,35 @@ const EstudianteRutaCheck = () => {
 
   useEffect(() => {
     if (rutaId) {
-      // 📡 Escuchar actualizaciones en tiempo real de la ruta
       socket.on(`ruta-${rutaId}`, (data) => {
         console.log("📡 Actualización en ruta:", data);
         setParadas(data.paradasRecorridas);
       });
 
-      // 📡 Notificación cuando la ruta termine
       socket.on(`ruta-${rutaId}-finalizada`, () => {
         alert("🚏 La ruta ha finalizado.");
+        localStorage.setItem("simulacionEnCurso", "false");
+        setSimulacionActiva(false);
       });
 
       return () => {
-        socket.off(`ruta-${rutaId}`); // 🔴 Eliminamos el evento cuando se desmonta
+        socket.off(`ruta-${rutaId}`);
         socket.off(`ruta-${rutaId}-finalizada`);
       };
     }
-  }, [rutaId]); // 📌 Solo se ejecuta cuando `rutaId` cambia
+  }, [rutaId]);
+
+  // 🔹 Escuchar cambios en localStorage para actualizar el estado en tiempo real
+  useEffect(() => {
+    const checkSimulacion = () => {
+      setSimulacionActiva(localStorage.getItem("simulacionEnCurso") === "true");
+    };
+
+    window.addEventListener("storage", checkSimulacion);
+    return () => {
+      window.removeEventListener("storage", checkSimulacion);
+    };
+  }, []);
 
   return (
     <div className="estudiante-ruta-check">
@@ -93,7 +104,10 @@ const EstudianteRutaCheck = () => {
         <section className="pantalla-estudiante-seleccion-de-parada-container4">
           <div className="MapaInteractivo">
             <h1>SIGA EL ESTADO DE LA RUTA</h1>
-            <MapaInteractivo paradas={paradas} />
+            <MapaInteractivo
+              paradas={paradas}
+              isActive={simulacionActiva} // 🔹 Solo muestra el bus si la simulación está activa
+            />
           </div>
         </section>
       </div>
