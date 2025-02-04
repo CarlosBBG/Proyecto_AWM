@@ -6,7 +6,7 @@ import BarraLateral from '../Componentes/BarraLateral';
 import Encabezado from '../Componentes/Encabezado';
 import MapaInteractivo from '../Componentes/MapaInteractivo';
 
-const socket = io("http://localhost:8000"); // 📡 Conectamos con el servidor WebSockets
+const socket = io(`${process.env.REACT_APP_API_URL}`); // 📡 Conectamos con el servidor WebSockets
 
 const EstudianteRutaCheck = () => {
   const [estudiante, setEstudiante] = useState(null);
@@ -34,7 +34,7 @@ const EstudianteRutaCheck = () => {
 
     // Cargar los datos del estudiante y obtener su ruta
     axios
-      .get(`http://localhost:8000/estudiantes/${estudianteId}`, {
+      .get(`${process.env.REACT_APP_API_URL}/estudiantes/${estudianteId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -46,7 +46,7 @@ const EstudianteRutaCheck = () => {
 
     // Cargar las paradas del estudiante
     axios
-      .get(`http://localhost:8000/estudiantes/${estudianteId}/paradas`, {
+      .get(`${process.env.REACT_APP_API_URL}/estudiantes/${estudianteId}/paradas`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {

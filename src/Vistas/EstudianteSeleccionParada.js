@@ -31,7 +31,7 @@ function EstudianteSeleccionParada() {
         const estudianteId = userData.id;
 
         axios
-            .get(`http://localhost:8000/estudiantes/${estudianteId}`, {
+            .get(`${process.env.REACT_APP_API_URL}/estudiantes/${estudianteId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -46,7 +46,7 @@ function EstudianteSeleccionParada() {
                     return;
                 }
 
-                return axios.get(`http://localhost:8000/estudiantes/${estudianteId}/paradas`, {
+                return axios.get(`${process.env.REACT_APP_API_URL}/estudiantes/${estudianteId}/paradas`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -59,7 +59,7 @@ function EstudianteSeleccionParada() {
 
                     if (response.data.length > 0) {
                         const rutaId = response.data[0].ruta;
-                        return axios.get(`http://localhost:8000/rutas/${rutaId}`, {
+                        return axios.get(`${process.env.REACT_APP_API_URL}/rutas/${rutaId}`, {
                             headers: {
                                 Authorization: `Bearer ${token}`,
                             },
@@ -97,7 +97,7 @@ function EstudianteSeleccionParada() {
         if (!pendingParadaId || !token) return;
 
         axios
-            .put(`http://localhost:8000/estudiantes/${estudiante.id}/paradas`, { parada: pendingParadaId }, {
+            .put(`${process.env.REACT_APP_API_URL}/estudiantes/${estudiante.id}/paradas`, { parada: pendingParadaId }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -133,7 +133,7 @@ function EstudianteSeleccionParada() {
         if (!token) return;
 
         axios
-            .put(`http://localhost:8000/estudiantes/${estudiante.id}/paradas`, { parada: null }, {
+            .put(`${process.env.REACT_APP_API_URL}/estudiantes/${estudiante.id}/paradas`, { parada: null }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

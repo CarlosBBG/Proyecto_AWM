@@ -39,7 +39,7 @@ const AdministradorEstudiantes = () => {
   const fetchData = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get('http://localhost:8000/estudiantes', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/estudiantes`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -79,14 +79,14 @@ const AdministradorEstudiantes = () => {
       if (currentRecord && currentRecord.id !== null) {
         const updatedRecord = { ...recordToAdd, id: currentRecord.id };
         console.log('Datos enviados para actualizar:', updatedRecord);
-        await axios.put(`http://localhost:8000/estudiantes/${currentRecord.id}`, updatedRecord, {
+        await axios.put(`${process.env.REACT_APP_API_URL}/estudiantes/${currentRecord.id}`, updatedRecord, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
       } else {
         console.log('Datos enviados para crear:', recordToAdd);
-        await axios.post('http://localhost:8000/estudiantes', recordToAdd, {
+        await axios.post(`${process.env.REACT_APP_API_URL}/estudiantes`, recordToAdd, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -116,7 +116,7 @@ const AdministradorEstudiantes = () => {
         console.error('No hay un ID válido para eliminar.');
         return;
       }
-      await axios.delete(`http://localhost:8000/estudiantes/${recordToDelete}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/estudiantes/${recordToDelete}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

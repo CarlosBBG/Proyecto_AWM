@@ -30,7 +30,7 @@ const EstudianteSeleccionRuta = () => {
     const estudianteId = userData.id;
 
     axios
-      .get(`http://localhost:8000/estudiantes/${estudianteId}`, {
+      .get(`${process.env.REACT_APP_API_URL}/estudiantes/${estudianteId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -47,7 +47,7 @@ const EstudianteSeleccionRuta = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    axios.get('http://localhost:8000/rutas', {
+    axios.get(`${process.env.REACT_APP_API_URL}/rutas`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -85,7 +85,7 @@ const EstudianteSeleccionRuta = () => {
     if (!pendingRutaId || !token) return;
 
     axios
-      .put(`http://localhost:8000/estudiantes/${estudiante.id}/ruta`, { ruta: pendingRutaId }, {
+      .put(`${process.env.REACT_APP_API_URL}/estudiantes/${estudiante.id}/ruta`, { ruta: pendingRutaId }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -111,7 +111,7 @@ const EstudianteSeleccionRuta = () => {
     if (!token) return;
 
     axios
-      .put(`http://localhost:8000/estudiantes/${estudiante.id}/ruta`, { ruta: null }, {
+      .put(`${process.env.REACT_APP_API_URL}/estudiantes/${estudiante.id}/ruta`, { ruta: null }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

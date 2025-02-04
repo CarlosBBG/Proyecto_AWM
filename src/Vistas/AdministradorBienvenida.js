@@ -18,7 +18,7 @@ function AdministradorBienvenida() {
       setAdministrador(parsedData);
 
       // Opcional: Si necesitas hacer una solicitud al backend para obtener más datos del administrador
-      axios.get(`http://localhost:8000/administradores/${parsedData.id}`, {
+      axios.get(`${process.env.REACT_APP_API_URL}/administradores/${parsedData.id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

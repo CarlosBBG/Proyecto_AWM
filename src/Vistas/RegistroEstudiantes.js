@@ -10,7 +10,7 @@ const RegistroEstudiantes = () => {
   const handleStudentRegistration = async (data) => {
     try {
       // Deja que el backend genere el ID
-      await axios.post("http://localhost:8000/estudiantes", data);
+      await axios.post(`${process.env.REACT_APP_API_URL}/estudiantes`, data);
 
       setSuccessMessage("Estudiante registrado exitosamente!");
       setTimeout(() => {

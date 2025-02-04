@@ -32,7 +32,7 @@ const AdministradorRutas = () => {
   const fetchData = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get('http://localhost:8000/rutas', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/rutas`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -110,14 +110,14 @@ const AdministradorRutas = () => {
 
       if (rutaId) {
         // Edición (PUT): Actualiza la ruta y reemplaza sus paradas
-        await axios.put(`http://localhost:8000/rutas/${rutaId}`, formattedRecord, {
+        await axios.put(`${process.env.REACT_APP_API_URL}/rutas/${rutaId}`, formattedRecord, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
       } else {
         // Creación (POST): Primero crea la ruta, luego las paradas
-        const response = await axios.post('http://localhost:8000/rutas', formattedRecord, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/rutas`, formattedRecord, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -127,7 +127,7 @@ const AdministradorRutas = () => {
 
       // Enviar las paradas con su id de ruta correspondiente
       if (formattedRecord.paradas.length > 0) {
-        await axios.post(`http://localhost:8000/rutas/${rutaId}/paradas`, { paradas: formattedRecord.paradas }, {
+        await axios.post(`${process.env.REACT_APP_API_URL}/rutas/${rutaId}/paradas`, { paradas: formattedRecord.paradas }, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -150,7 +150,7 @@ const AdministradorRutas = () => {
   const confirmDelete = async () => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:8000/rutas/${recordToDelete}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/rutas/${recordToDelete}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

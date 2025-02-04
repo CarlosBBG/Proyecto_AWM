@@ -11,23 +11,20 @@ const ConductorRutaCheck = ({ titulo, claseContenedor, paradas, onBotonClick, ma
           {paradas.map((parada, index) => (
             <div
               key={index}
-              className={`parada ${index < 2 ? 'primera-parada' : ''}`}
+              className="parada"
             >
               <span>{parada}</span>
-              {index < 2 && (
-                <img
-                  src="https://cdn-icons-png.flaticon.com/128/8215/8215539.png"
-                  alt="Visto"
-                  className="parada-icono"
-                />
-              )}
+              <img
+                src="https://cdn-icons-png.flaticon.com/128/8215/8215539.png"
+                alt="Visto"
+                className="parada-icono"
+              />
             </div>
           ))}
           <button className="boton-detener" onClick={onBotonClick}>
             Detener Ruta
           </button>
         </div>
-        
       </div>
     </div>
   );

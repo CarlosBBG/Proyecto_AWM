@@ -28,7 +28,7 @@ function EstudiantePantallaInicio() {
     const estudianteId = userData.id; // Asegúrate de que tu backend use esta clave
 
     axios
-      .get(`http://localhost:8000/estudiantes/${estudianteId}`, {
+      .get(`${process.env.REACT_APP_API_URL}/estudiantes/${estudianteId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

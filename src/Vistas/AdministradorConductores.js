@@ -44,7 +44,7 @@ const AdministradorConductores = () => {
       setAdministrador(parsedData);
 
       // Opcional: Si necesitas hacer una solicitud al backend para obtener más datos del administrador
-      axios.get(`http://localhost:8000/administradores/${parsedData.id}`, {
+      axios.get(`${process.env.REACT_APP_API_URL}/administradores/${parsedData.id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,7 +65,7 @@ const AdministradorConductores = () => {
   const fetchData = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get('http://localhost:8000/conductores', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/conductores`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -107,7 +107,7 @@ const AdministradorConductores = () => {
         console.error('No hay un ID válido para eliminar.');
         return;
       }
-      await axios.delete(`http://localhost:8000/conductores/${recordToDelete}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/conductores/${recordToDelete}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -183,7 +183,7 @@ const AdministradorConductores = () => {
       if (updatedRecord.id !== null) {
         // Actualizar un registro existente
         await axios.put(
-          `http://localhost:8000/conductores/${updatedRecord.id}`,
+          `${process.env.REACT_APP_API_URL}/conductores/${updatedRecord.id}`,
           updatedRecord,
           {
             headers: {
@@ -193,7 +193,7 @@ const AdministradorConductores = () => {
         );
       } else {
         // Crear un nuevo registro
-        await axios.post('http://localhost:8000/conductores', updatedRecord, {
+        await axios.post(`${process.env.REACT_APP_API_URL}/conductores`, updatedRecord, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

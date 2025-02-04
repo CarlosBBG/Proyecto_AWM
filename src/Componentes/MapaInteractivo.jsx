@@ -13,8 +13,8 @@ L.Icon.Default.mergeOptions({
 
 const busIcon = new L.Icon({
   iconUrl: "https://img.freepik.com/vector-gratis/etiqueta-engomada-historieta-autobus-escolar-fondo-blanco_1308-76579.jpg?t=st=1738635777~exp=1738639377~hmac=92dd9331daf1393887c3bc695283fcbfee2e4aa41b386e53e7d95b5889c2bc32&w=996", // Ícono amarillo
-  iconSize: [32, 32], 
-  iconAnchor: [16, 32], 
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
 });
 
 const MapaInteractivo = ({ paradas }) => {
@@ -30,7 +30,9 @@ const MapaInteractivo = ({ paradas }) => {
         parseFloat(parada.latitud),
       ]);
 
-      fetch("http://localhost:8000/rutas/optima", {
+      const API_URL = process.env.REACT_APP_API_URL;
+
+      fetch(`${API_URL}/rutas/optima`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

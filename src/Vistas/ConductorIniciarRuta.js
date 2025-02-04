@@ -30,7 +30,7 @@ function ConductorIniciarRuta() {
     const conductorId = userData.id;
 
     axios
-      .get(`http://localhost:8000/conductores/${conductorId}/paradas`, {
+      .get(`${process.env.REACT_APP_API_URL}/conductores/${conductorId}/paradas`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -51,7 +51,7 @@ function ConductorIniciarRuta() {
       });
 
     axios
-      .get(`http://localhost:8000/conductores/${conductorId}`, {
+      .get(`${process.env.REACT_APP_API_URL}/conductores/${conductorId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

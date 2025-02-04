@@ -34,7 +34,7 @@ function ConductorPantallaInicio() {
 
     // 3) Hacer la consulta GET usando el ID real
     axios
-      .get(`http://localhost:8000/conductores/${conductorId}`, {
+      .get(`${process.env.REACT_APP_API_URL}/conductores/${conductorId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

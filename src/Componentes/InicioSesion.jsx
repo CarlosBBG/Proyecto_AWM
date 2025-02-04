@@ -12,7 +12,8 @@ const InicioSesion = () => {
     e.preventDefault();
     try {
       // Hacer la solicitud POST a /api/login (o la ruta que uses en tu backend)
-      const response = await axios.post('http://localhost:8000/login', {
+      console.log(process.env.REACT_APP_API_URL);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, {
         correo: email,
         password: password,
       });

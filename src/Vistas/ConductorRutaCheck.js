@@ -34,7 +34,7 @@ function ConductorRutaCheck() {
 
     // 3) Llamar al endpoint para obtener la ruta y paradas del conductor
     axios
-      .get(`http://localhost:8000/conductores/${conductorId}/paradas`, {
+      .get(`${process.env.REACT_APP_API_URL}/conductores/${conductorId}/paradas`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -49,7 +49,7 @@ function ConductorRutaCheck() {
 
     // 4) Llamar al endpoint para obtener el nombre de la ruta
     axios
-      .get(`http://localhost:8000/conductores/${conductorId}`, {
+      .get(`${process.env.REACT_APP_API_URL}/conductores/${conductorId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
