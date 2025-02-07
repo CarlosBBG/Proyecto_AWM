@@ -7,6 +7,7 @@ import Encabezado from '../Componentes/Encabezado';
 import MapaInteractivo from '../Componentes/MapaInteractivo';
 
 const socket = io(`${process.env.REACT_APP_API_URL}`);
+localStorage.setItem("simulacionEnCurso", "false");
 
 const EstudianteRutaCheck = () => {
   const [estudiante, setEstudiante] = useState(null);
